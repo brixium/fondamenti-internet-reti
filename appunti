@@ -1,0 +1,823 @@
+Appunti di fondamenti di internet e reti - pro.ANtonio Capone
+/*********/
+25 febbraio 2019
+/*********/
+Lezione introduttiva
+antonio.capone@polimi.it	0223993449
+subject #FIR
+Ricevimento in Bovisa il mercoledì 8.30 - 10:00
+VIA room wi-fi
+room name: 172.26.13.31
+Code 2238
+Materiale all'indirizzo home.deib.polimi.it/capone/ e http://www.antlab.polimi.it/teaching-capone/fondamenti-di-internet-e-reti
+Laboratorio con Ing.Moro
+
+Libro di riferimento: J.F. Kurose, K.W. Ross
+Reti di calcolatori e internet 
+edizione Pearson
+
+Altro materiale:
+	- slide
+	- appunti
+	- materiale a supporto del laboratorio
+	- video lezioni su yt
+	- letture suggerite
+	- strumenti per lezioni e laboratorio
+
+Laboratorio è parte integrante del corso dove si spiegano cose diverse dalla lezione
+Meglio studiare prima di fare laboratorio
+Se prof. va veloce fare domande
+
+Organzizzazione corso:
+	58h di lezione circa
+	24h esercitazione circa
+	18h laboratorio fisse
+
+Esercitazioni poste alla fine di ciascun argomento
+Laboratorio si svolge qui, in aula B8.1.1 (ci sarà una volta in cui saremo in B8.0.3 che non è dotata di presa eth)
+BYOD
+
+Prove in itinere:
+	1) 17 Aprile
+	2) fine corso, prob. 2 luglio
+	durante la seconda prova anche appello completo
+
+Esame solo scritto
+	3 esercizi simili a quelli visti a lezione/eserc
+	1 esercizio di laboratorio
+	domande risposta aperta/chiusa
+	5/6 pt x es, 8/9pt x domande, 6pt laboratorio, totale 32punti
+Punti extra per chi frequenta: alla fine di ogni capitolo (sono 5) ci sono dei test online fatti su kahoot.it in classe usando PC, smartphone o tablet
+	3pt per frazione di risposte esatta su totale complessivo 3x(0.boh)
+	1 punto premio per chi vince la gara di ogni capitolo
+	Non è possibile rispondere da remoto
+
+No orale se non per casi critici
+
+Scopo: 
+Introduzione alle interfacce di rete
+Controllare interazione tra app e rete, configurare rete, prevedere il comportamento della rete e prestazioni, monitorare il sistema e risolvere i problemi, pronti ai cambiamenti tecnologici
+
+Le applicazioni sono sempre più distribuite 
+
+Oggi sviluppare un'applicazione comporta
+	1) scrivere le componenti server
+	2) inserirle in VM
+	3) istanziarle su un servizio cloud
+	4) Scrivere le componenti cloud per più piattaforme
+	5) Inserirle negli store
+	6) Aspettare che gli utenti scarichino le app
+	7) COntrollare la relazione con la rete
+
+Applicazioni di reti
+Tendenza SDN, Software Defined Network, ovvero controllare la rete con applicazioni di rete, costituisce una grande fetta di mercato di lavoro
+
+Comeptenze miste per ingegneria dell'informazione 
+
+Primo corso che dà un assaggio di indirizzo comunicazione, divisi al terzo anno
+Al secondo anno ci sono scelte parzialmente vincolanti
+
+3 scelte 
+	logica e algebra - insegnamento taba OPPURE elettromagnetismo e campi
+	e altre, le slide sono sul web @ https://www.dropbox.com/s/74xcv629ddkfg1k/1 - Introduzione e architetture v2019.pdf 
+	informazione e stima è insegnato da ingegneri, probabilità e statistica da matematici
+	per info logica e algebra per info
+
+logica e algebra + taba + algoritmi e principi per info (X INFORMATICA)
+se indeciso anche informazione e stima, gruppo taba onde el. e mezzi trasmissivi, API
+
+x com indecisi
+	informazioni e stima
+	el. e campi
+	logica e algebra e onde el. e mezzi
+	segnali per le comunicazioni
+
+Breve storia di internet
+ARPA Network (ARPANet) nel 1969 (4 nodi)
+Padri: Kleinrock, Lawrence Roberts
+1972: nasce NCP, primo porgramma di posta elettronica, 15 nodi di arpanet
+1970: ALOHAnet rete radio a pacchetti per univ. Hawaii
+Cerf and Kahn definiscono i principi dell'internetworking
+1976: nasce Ethernet nei laboratori Xerox @10Mbps
+1979: ARPANet 200 nodi
+
+Anni '80: nasce SMTP, FTP, DNS. TCP/IP sostituisce NCP
+Nuove reti nazionali: Csnet, BITnet, ...
+Per il web bisogna aspettare gli anni 90 (Tim Berners Lee), Mosaic->Netscape
+Anni 2000: problema di sicurezza (Diffie-Hellman-Merkle) velocità in Gbps
+2010 - oggi: esplosione mobile internet, arrivano smartphone
+CAIDA's IPv4 Map Feb 2017
+
+99% del traffico internazionale di internet è sui cavi sottomarini
+cybermap @ kaspersky
+
+Programma del corso (prima parte):
+1) Introduzione e architetture
+2) Sistemi di comunicazione
+3) Modelli funzionali
+4) Livello fisico 
+
+Approccio TOP-DOWN (della pila ISO/OSI)
+
+Martedì 12 Marzo pomeriggio in Leonardo siamo invitati ad un seminario per vedere un esperimento di fotografia, digitalizzazione e invio nell'edificio 20.
+
+seconda parte
+5) protocolli applicazivi
+6) trasporto (UDP/TCP)
+7) livello di rete (networking)
+8) inoltro in internet (inoltro, instradamento)
+9) rete locale e livello di linea (Layer 2)
+
+In laboratorio usiamo wireshark, ping, traceroute, dig, F12 di chrome, protocolli applicativi
+Python escripting per analisi di rete
+Programmazione socket in Python
+Packet tracer
+attività sperimentali su wireless
+
+//note4selfl8r https://www.jetbrains.com/pycharm/download/#section=linux
+
+è possibile frequentare il CORSO CCNA e fare il test CCNA. Il test costa poco (<100 €) ma la preparazione un po'di più
+Ci sono 4 moduli
+CCNA1, ..., CNNA4
+
+Giochiamo con un analogia per capire il networking
+Nome Cognome Indirizzo
+
+parliamo di rotte (route), router,
+prova con kahoot
+
+NICKNAME: CODICE PERSONA + PRIME 6 LETTERE DEL COGNOME
+
+velocità di propagazione = velocità luce 299 792 458 m/s
+/**********/
+Mercoledì 27 febbraio 2019
+/**********/
+Argomenti: Concetti base, architettura e componenti, meccanismi base e nomenclatura
+Cos'è internet?
+	1) È un'infrastruttura fisica fatta di componenti
+	2) Un'architettura di rete
+	3) Un servizio di comunicazione (comprende protocolli di comunicazione)
+Componenti fisiche: 
+	HOST = terminali connessi alla rete
+	LINK = collegamenti = canali di comunicazione (rame, fibra, satellitare)
+	ROUTER = nodo di rete
+	altri nodi di rete locali (switch, access point, modem,...)
+	
+	HOST
+		sono in grado di inviare e ricevere info su internet
+		sono diversi tra loro pc, stampanti, iot devices, server
+		host virtuali VM che non facciamo in questo corso
+	LINK
+		possono essere di natura fisica diversa(rame, radio, fibra ottica, ...), diversa tecnologia di trasmissione dell'informazione, diverse velocità di trasmissione in bps
+	ROUTER
+		Sono nodi di rete che operano sui pacchetti
+		opera a 3zo livello pil ISO/OSI (solo router), switch 2ndo livello, alcuni anche terzo
+		anche access point
+ISP ->internet service provider col quale ci si connette tramite tecnologie di accesso a internet
+Accesso a internet: dialup
+	via modem fino a 56kbps; accesso diretto al router dell'ISP mediante circuito telefonico; trasmissione del segnale in banda fonica
+	Molto ristretto perché limitato alla banda telefonica 0 - 4 kHz
+Accesso tramite ADSL ( asimmetric digital subscriber line)
+	fino a 1Mbps upstream, 20 Mbps downstream)
+	condivisione del doppino con la rete telefonica fino alla centrale
+	accesso al router del provider mediante rete dati ad alta velocità
+	Il segnale non passa dalla rete telefonica (limitata dalla banda), per cui si basa sulla qualità del doppino telefonico
+Accesso tramite fibra ottica
+	Sostituzione totale/parziale del doppino telefonico con fibra ottica
+	FTTH - Fiber to the home
+	FTTB
+	FTTC
+	FTTN
+Accesso tramite rete cellulare
+	GPRS/EDGE ~200kbps
+	HSPA ~14,5(D)/5,7(U) Mbps
+	LTE ~300(D)/85(U) Mbps
+	rete d'accesso contente core network mobile operator
+
+Reti di reti
+	Consente di fare comunicare diverse reti interconnesse cucite insieme in qualche modo
+	ISP
+	Eterogeneità della reti con meccanismi di interconnessione(protocollo IP)
+
+Tipi di reti in base all'estensione geografica
+	LAN: local area network
+	MAN: metropolitan area network (cabine cittadine)
+	WAN: wide area network
+	
+Architettura di interconnessione
+	CN = customer network (rete casalinga, utente finale)
+	POP = point of presence (altro estremo rispetto al CN, più vicino a ISP, È il punto di giunzione)
+	ISP = internet
+	NAP = neutral access point o MIX, IEP (internet exchange point, ce ne sono 2/3 in italia, 1 a milano caldera, 1 a Napoli). Diversi nodi di più operatori in un luogo di terzi si connettono tra di loro. Scambio di traffico dati. Possono esistere collegamenti diretti peer-to-peer tra ISP. Gerarchie tra ISP.
+	BSP = Backbone Service Provider. È il fornitore di servizi internet agli ISP per collegamenti internazionali / intercontinentali.
+
+Servizio e protocolli di comunicazione
+	Servizio di comunicazione può essere il servizio postale. Esistono regole di consegna se no niente servizio. Quello che c'è nella lettera non è affare della posta.
+	Il servizio di comunicazione è il rapporto cliente(alto)-fornitore(basso)-destinazione(alto).
+	Servizio SOCKET: meccanismo per accedere all'interfaccia di rete (trasporto LV4) dal SO.
+	Si possono trasportare messaggi di vario tipo, dalle più complesse alle più semplici
+	
+	Protocollo di comunicazione: stessa lingua, ordine dei messaggi
+	Esempio della posta elettronica SMTP sulle slide
+	Modelli:
+		-client-server: uno funge da client (richiede), l'altro da server(risponde) (es. SMTP, HTTP, ...)
+		-peer-to-peer: i terminali collaborano senza distinzione di ruoli (fungono sia da server che da client) (gnutella, ...)
+	
+Come funziona internet? DOmanda occupa l'intero corso
+Come può essere trasferita l'info?
+	1) Commutazione di circuito
+		Rete fatta di fili cuciti insieme per arrivare a destinazione che potevano essere manuali (centralinista). Pezzi di filo con ponti fatti a mano.
+		La figura del centralinista è sostituita da mezzi automatici ma la commutazione di circuito era rimasta nella telefonia fissa
+		Condivisione della rete.
+		Ricerca di circuito, apertura del circuito e conversazione tramite impulsi elettrici. Una volta terminata la conversazione i brani di filo vengono rilasciati.
+		Necessita di fili, conduttori separati. 
+		Suddivisione della banda del collegamento in frequenza o in tempo
+		Collegare insieme ingresso e uscita con modello di nodo (commutatore a circuito).
+[ Numero di archi in un grafo completo = n*(n-1)/2 ]
+	2) Commutazione di pacchetto
+		informazione suddivisa in pezzi;
+		collegamenti non suddivisi;
+		ciascun pezzo (pacchetto) ha una intestazione (header) che indica l'indirizzo di destinazione e altre informazioni per la comunicazione che è diverso dal contenuto.
+		Non esiste un canale dedicato, il pacchetto fa dei salti tra router
+		I router possiedono una tabella di instradamento che assegnano un gruppo di indirizzi di destinazione al nodo verso cui inoltrare le informazioni
+		I router hanno computazione parallela e non sequenziale per gestire meglio la gestione della lista. 
+		
+		Il flusso di dati è suddiviso in pacchetti che occupano completamente il canale, poi da ricucire insieme
+		
+		Modello di nodo (packet switch/ router)
+			l'arrivo dei pacchetti è asincrono; la capacità dei collegamenti è arbitraria; possono esserci conflitti temporali per la trasmissione;
+			serve memorizzare contemporaneamente (coda): in ingresso per analizzare indirizzo destinazione; in uscita per gestire confitti
+
+		Contesa per le risorse: 2 modi per gestire le cose
+			store and forward: il commutatore deve ricevere l'intero pacchetto prima di inviarlo sul collegamento in uscita: non si elabora se non è completamente ricevuto
+			cut-through: altra modalità di gestire le code (per questo corso dimentichiamocelo) che inizia ad inviare prima di avere ricevuto i dati ma solo l'header
+	Confronto tra pacchetto e circuito
+		Collegamento da 1 Mbps, n utenti. Utente genera 100 kbps quando è attivo; è attivo per il 10% del tempo.
+		-> commutazione a circuito con 10 utenti: 10 utenti (1 Mbps / 100 kbps = 10)
+		-> c. a pacchetto: con 35 utenti, la probabilità di avene >10 attivi è 0,004%.
+		
+	La storia di internet nasce con la scelta della comutazione a pacchetto.
+	
+	Esistono 2 tipi di comm. di pacch. 
+		- datagram (IP)
+			la scelta della porta è fatta basandosi sulla porta di destinazione
+
+		- circuito virtuale (tecnologie usate dagli ISP per gestire in modo + efficiente i collegamenti internet)
+			assegnazione di un label univoco (CVI) ad ogni pacchetto
+			tabelle più corte perché basate su CVI ma più dispendioso per scrivere le label
+
+
+1c - Ritardi e throughput: tempi di trasmissione, propagazione, altri ritardi, throughput
+Velocità di trasmissione
+	È la velocità (rate) R con cui l'info digitale viene trasmessa su una linea = num. bit nell'unita di tempo
+	È misurata in bit/s (bps) (bit per second)
+	1 B = 8 b;
+	1 kbps (kb/s) = 10^3 bps; 1 kB = 10^3 B;
+	1 Mbps
+	1 Gbps
+	durata di trasmissione di un bit è inverso della frequenza
+
+	Il tempo T per trasmettere L bits dipende dalla velocità di trasmissione R
+	L [b] , T [s], R [bps]
+	T = L / R
+	[s]^1 = [b]^1 / ([b]^1 * [s]^-1) = [s]^1 = [b]^1 * [b]^-1 * s[1] = [s] = [s]
+
+	Il max della velocità nell'universo è la velocità della luce
+	Il ritardo di propagazione
+	Il tempo tau affinché un impulso trasmesso dal trasemttitore TX raggiunga il ricevitore RX dipende dalla distanza D in m e dalla velocità di propagazione v in m/s, prossima alla vel. della luce (= c = 3*10^8 m/s
+	tau = D / v
+	tau [s] = D [m] / v [m/s]
+	Noi assumiamo che la velocità di trasmissione sia 2/3 della velocità della luce (200.000 km/s)
+	Tempo di attraversameto del canale = T + tau
+	
+	T = t2-t0 = t3-t1 = L/R (si riferisce a esempio slides)
+	tau = t1-t0 = D/v
+	
+	Esempio di store and forward supponendo che l'elaborazione nel router di mezzo sia immediata
+	Tempo totale = TAB + tauAB + TBC + tauAB
+	Si suppone solo che sia store and forward
+
+Architettura di un nodo (software-switch vs hardware-switch)
+	Tante NIC collegate al bus I/O. C'è system bus tra memory e CPU.
+/*********/
+Giovedì 28 febbraio 2019
+/********/
+Nella lezione precedente ritardo di un nodo
+2 modelli: modello classico di un nodo simile ad un PC con CPU, mem e più NIC; nodo con architettura hardware dedicata.
+Tempo attesa pacchetti in ingresso (quasi nulla per nodi con hw switch)
+Capacità di processamento è limitata dal tratto in uscita del nodo. Spesso la capacità è misurata in bit/s (in realtà pacch/s moltiplicate per la lungh. media del pacchetto)
+2 ragioni del ritardo tau: linea occupata o lookup della tabella. Spesso il lookup della tabella è 0, per cui noi assumiamo che sia 0, l'accodazione dei pacchetti dipende.
+
+(slide 115) un nodo della rete continua a trasmettere a velocità più alta possibile (livello 3, a livello di trasporto le cose cambiano)
+	ci sono 2 pacchetti: a e b trasmessi da A a B. Ma T2A è aumentata perché la velocità del collegamento 2 è inferiore a quella del link 1.
+	Il pacchetto verde (b) non può quindi essere trasmesso subito, ma deve aspettare che il pacchetto viola arrivi.
+	Quando il pacchetto viola è stato trasmesso parte la seconda trasmissione.
+*	T1B non è preso in considerazione perché la trasmissione avviene in parallelo, si conta il più lungo.
+(slide 116)
+*	In questo caso i due pacchetti vanno in due parti diverse e vanno mandati nello stesso momento
+
+Multiplazione statistica
+	Il ritardo di accodamento dipenda della velocità del link e dal ritardo in uscita 
+	La coda non serve per compensare alla velocità in uscita dal link
+	Pacchetti droppati
+
+	Ritardo di accodamento 
+	L -> lunghezza dei pack
+	lambda -> frequenza dei pack
+(slide 120)
+	Quindi se l'intensità di traffico ~0 allora ritardo in coda è piccolo, se ->1 (tende a) il ritardo tende all'infinito
+(s. 121) formula del ritardo di accodamento medio
+Se il ritmo di avvio si avvicina al ritmo di uscita allora ritardi e packet drop.
+
+Perdite di pacchetti
+	le code hanno dimensioni limitate. In congestione (ritmo di arrivo troppo elevato), i pacchetti vengono scartati
+	i pacchetti persi possono essere ri-trasmessi oppure no a seconda del protocollo di trasporto che gestisce l'evento di perdita.
+	
+1d - modelli di servizio e livelli dei protocolli
+(servizio di comunicazione, protocolli, primitive di servizio, architetture a livelli, funzioni di rete)
+Esempio dei due interlocutori come due entità (A e B) che vogliono comunicare.
+In orizzontale avviente il colloquio, in verticale il servizio.
+Primitive di servizio: chiamate di servizio.
+	\-> regole di accesso, descrivere il s., richiederlo, ricevere informazioni.
+	\-> caratterizzate da parametri quali: info da trasferire, info destinatario, caratteristiche del servizio
+	
+Le primitive possono essere considerate dei punti di passaggio (service access point).
+___nodo a__                    ____nodo b_____
+|ente A   |                    |     ente B   |
+|         |                    |              |
+|   A2    |<--colloquio------->|      B2      |
+|         |                    |              |
+|         |                    |              |
+|   A1    |<------colloquio--->|      B1      |
+|         |                    |______________|
+|_________|                          ^
+       |_____________________________| 
+              Canale bidirezionale
+
+(slide 130)
+2 modalità di servizio di comunicazione:
+	Modalità senza connessione (UDP, ndr)
+		- una sola fase di invio
+	Modalità a connessione (TCP, ndr)
+		- instaurazione della connessione
+		- trasferimento della informazione
+		- rilascio della connessione
+
+Le reti sono organizzate a livelli: i colloqui devono essere mediati dai livelli inferiori
+Le reti sono divise in pezzi orizzontali per semplificare le cose una alla volta
+I livelli servono ad arricchire il servizio di comunicazione
+
+Protocolli di comunicazione 
+	la logica con cui creo, trasmetto e ricevo i messaggi è un protocollo. (es. grammatica per il colloquio)
+	Insieme di regole per colloquiare tra lo stesso livello
+	Non c'è un solo modo. problema delle scelte da prendere.
+
+PDU = Packet Data Unit = unità di trasferimento dati. È formato da:
+	header 	-> informazione di servizio necessaria al coordinamento tra le entità
+	dati 	-> informazione vera e propria ricevuta dai livelli superiori
+
+Architettura a livelli (s. 134)
+	Overhead = info. aggiunta (header)
+
+PILA ISO/OSI (questa non l'ha considerata per ora)
+____________________
+|Application   Lv 7|  MESSAGES - MESSAGGI
+|__________________|
+|Presentation  Lv 6| 
+|__________________|
+|Session       Lv 5|
+|__________________|
+|Transport     Lv 4|  SEGMENTS - SEGMENTI
+|__________________|
+|Network       Lv 3|  PACKETS - PACCHETTI
+|__________________|
+|Data link     Lv 2|  FRAMES - TRAME
+|__________________|
+|Physical      Lv 1|  BIT
+|__________________|
+
+Ciascun livello ha il suo compito
+È più facile gestire aggiornamenti e cambiamenti se limitati a solo un livello
+
+PILA TCP/IP
+
+____________________
+|Application   Lv 5|  MESSAGES - MESSAGGI
+|__________________|
+|Transport     Lv 4|  SEGMENTS - SEGMENTI
+|__________________|
+|Network       Lv 3|  PACKETS - PACCHETTI
+|__________________|
+|Data link     Lv 2|  FRAMES - TRAME
+|__________________|
+|Physical      Lv 1|  BIT
+|__________________|
+
+Wireshark: analisi pacchetti di rete
+	\-> è uno sniffer di rete. È un modulo interamente passivo che non può inviare pacchetti autonomamente.
+	formato file .pkcap
+	
+	Il packet analyzer consente di analizzare i contenuti e lo header dei pacchetti
+	wireshark è solo una interfaccia grafica, il motore è libpcap / WinPCap.
+
+	00:00:0c -> cisco
+
+Funzione Multiplazione (per l'andata, demultiplazione in ricezione)
+	mettere insieme e separare flussi informativi
+	più livelli superiori possono condividere lo stesso servizio di comunicazione, per cui devo potere distinguere le informazioni con una "etichetta"
+	Il numero di porta di TCP (lv.4) serve a questo scopo
+	Una macchina può avere più applicazioni, che sono distine in base ad un numero di porta.
+	La funzione di multiplazione può essere implementata a qualunque livello.
+(slide 142)	
+Funzione di controllo d'errore
+	Garantire affidabilità nella trasmissione (CRC)
+	Trasmetto un pacchetto e alla fine aggiungo il trailer (coda) composta dal codice di controllo
+	Acknowldedgment e timeout
+	
+Funzione di instradamento (routing)
+	\->trovare la strada verso un'altra rete
+	Esiste una entità e più uscite. Da dove arriva il pacchetto? Dai livelli superiori (es. lv n)
+	L'indirizzo va messo prima che venga inviato all'entità instradante.
+	L'indirizzo del livello n  viene scritto e si decide dove inviarlo a seconda della tabella di instradamento.
+	
+	Il pacchetto può arrivare da una porta di ingresso.
+	L'entità instradante fa il forwarding (consulta la tabella e viene inoltrato verso l'interfaccia corrispondente in tabella).
+	
+	esempio slide 145
+	nei nodi di rete i livelli considerati dagli apparati router si fermano al livello 3. Gli switch idem ma con il livello 2.
+	Proxy: funzione di rete a livello applicativo.
+	Chi scrive le tabelle di instradamento?
+		\-> "Human defined Networking": rotte statiche scritte a mano.
+		\-> MAC learning fatto dalle macchine di rete
+		\-> "Software defined networking" SDN
+/*********/
+Mercoledì 6 marzo 2019 (sì, ho perso una lezione)
+/*********/
+reminder demo/seminario livello fisico martedì 2019-03-12 h.16:00 EL.0 (Leonardo) max.2 ore
+1b. livello fisico
+aspettiamoci il primo kahoot
+Segnali e frequenze
+Siccome non abbiamo visto le trasformate in analisi 2, abbiamo meno strumenti per comprendere questa cosa
+I segnali: sorgenti di informazioni che possono essere
+	digitali, numerici
+
+	segnali fisici: sorgenti continue
+	(es. radio FM vs DAB: digital audio broadcasting)
+	a noi interessano i segnali digitali. Conversione da analogico a digitale attraverso campionamento e quantizzazione. In output avremo dei bit
+	
+	segnali nel dominio del tempo? Meglio di no, è più comodo vedere i segnali nel dominio delle frequenze.
+	Con la trasfomata di Fourier.
+	Tempo misurato in secondi, frequenza in Hz (secondo alla meno 1) [T]^-1
+	I segnali sono scomposti in molte sinusoidi, che sono le frequenze che lo compongono.
+	Lo spazio in cui la f ha valori =/= 0 si chiama banda del segnale
+	L'analisi di Fourier è comoda per segnali periodici, come le sinusoidi. 
+	Insieme continuo vs discreto.
+	L'onda quadra è formata da una serie di Fourier di sinusoidi (se è periodico, se è discreto la trasformata).
+	s(t) nel dominio del tempo e S(t) (che è lo spettro del segnale) è nel dom della frequenza.
+	Se continuo a sommare sinusoidi con tutte le sue armoniche ottengo un onda quadra nel dom. del tempo.
+	La banda di un onda quadra è infinita ( perché la pendenza è verticale), ma noi prendiamo una banda limitata.
+	Più le transizioni sono nette, maggiore sarà la banda
+	media nulla = non c'è la componente continua (f=0), altrimenti c'è ed è costante
+	la media non è nulla perché il grafico era spostato verso l'alto e non era alternato
+	Esempio onda a dente di sega.
+	I segnali non periodici non hanno uno spettro discreto ma continuo
+	SYNC ha banda infinita e spettro è sin(x)/x . Bisogna tagliare le frequenze esterne del sync per poterlo spedire. Cambierà un pochino la forma del segnale
+	Banda stretta (segnale che varia lentamente) e banda larga: varia velocemente nel tempo.
+	Più la banda è larga più energia in TX ci vuole.
+	
+
+	Segnale telefonico ha banda (300 - 4000 Hz) Fc:	8KHz	lv.	256	8 bit			 Flusso binario	64  kb/s
+			voce 				(300 - 8000 Hz)		16KHz			16 bit							256 kb/s	
+			musica 				(100 - 8000 Hz)		40KHz			16 bit							704 kb/s
+			TV(PAL) (analogica) (0 - 5 MHz)			10MHz			24 bit (colori)					240 Mb/s
+			cinema 				(0-500 MHz)			1GHz			24 bit (colori)					24  Gb/s
+	
+Conversione analogico-digitale
+	Rappresentazione umana: modo analogico
+	Elaboratori numerici: discreto
+	
+	Diversi passaggi
+	1) CAMPIONAMENTO
+		Definisco un periodo (frequenza) di campionamento
+		
+		Teorema di Nyquist(-Shannon questo lo dico io)
+			fc >= 2B = fN (frequenza di Nyquist)
+			(la frequenza di cmapionamento deve essere 2 volta la banda per poter essere ricostruita)
+		
+		Se non rispettiamo il teorema di Nyquist, il segnale ricostruito è sbagliato, alterato. Evitare questo
+		Se la banda è larga bisogna aumentare la frequenza di campionamento, altrimenti no
+		
+		Con un filtro rimuovo le frequenze non deisderate (somiglia ad un mezzo trasmissivo)
+		Sempre con un filtro passa basso (da 0 a 2B)riottengo il segnale originale 
+	
+	2) QUANTIZZAZIONE
+		È l'operazione che trasforma un segnale da continuo a discreto.
+		Quindi sull'asse delle ordinate non ci saranno più tutti i numeri ma solo un certo numero di "gradini"
+		Nella trasformazione si commette un errore di approssimazione (quantizzazione)
+		Più livelli ci sono meno errori di quantizzazione. Ogni livello è rappresentato da una sequenza di bit
+		Ricondurre poi ciascun campione ad un livello
+
+		l = 2^b
+		l = num.livelli di quantizzazione
+		b = num.bit per livello
+
+Modulazione e trasmissione
+	La trasmissione di un segnale digitale (numerico) richiede di creare un opportuno segnale adatto per essere trasportato sul mezzo fisico.
+	La sequenza digitale viene usata per modificare (modulare) un qualche parametro del segnale (modulato) inviato nel mezzo trasmissivo.
+	Modulazione in banda base (spettro contiguo rispetto all'origine)
+	Banda traslata (non vicine allo 0)
+	Modulazione in banda base basata sugli impulsi.
+	PAM - Pulse Amplitude Modulation
+		\-> il bit corrisponde ad un impulso di ampiezza positiva (1) o negativa (0)
+	
+	Modulazione in banda traslata:
+		si crea un onda EM (sinusoide) detta PORTANTE (carrier) ad una determinata frequenza (fp) per traslare lo spettro del segnale intorno alla frequenza della portante
+		
+	R = 2B
+	In caso di modulazioni in banda traslata efficienza spettrale = 1 bit per Hz
+	Onde elettromagnetiche
+
+	Modulazione in banda traslata
+	\->	ASK Amplitude Shift keying	: modulazione in ampiezza della carrier
+		FSK Frquency				: modulazione in frequenza carrier
+		PSK Phase					: moudulazione in fase carrier
+		QAM	(quadratura)			: cambiamento misto di ampiezza e fase
+	
+	Modulazione multilivello
+		impulsi su più livelli (es. 8-PSK, 16QAM) (sul cellulare fino a 256 livelli)
+	
+	Aumenta l'efficienza spettrale. SImboli al secondo = baud (vecchio nome)
+	Esiste un valore massimo di robeh calcolata da Shannon
+	
+	Mezzo trasmissivo: riceve il segnale in ingresso e lo trasporta, ma viene alterato (es. ritardo, minor potenza).
+	Attenuazione	della potenza in funzione dela distanza percorsa e della frequenza del segnale;
+	Dispersione		ritardo differente per ogni componente in frequenza
+	Banda passante del canale (mezzo trasmissivo) è la regione in cui si ha la migliore risposta in termini di attenuazione e dispersione.
+	
+	Mezzi trasmissivi guidati(wired) o non guidati (wireless)
+
+	Attenuazione = Pout/Pin in dB. A(dB) = 10logb10(Pout/Pin)
+	A = kd^-x	x=2,3,4,5
+	
+	Errori in ricezione.
+	Cause:	- rumore termico (mezzi trasmissivi, apparati di tx e rx)
+			- interferenza
+			- other
+	Il rimore è un processo casuale 
+
+	Codici correttori
+		Si può abbassare la probabilità di erore in un blocco con codicei correttori d'errore (Forward Error Correction FEC) = bit di ridondanza/parità
+	Ritrasmissione: se ci sono errori, ritrasmetto il pacchetto errato (ARQ - Authomatic Repeat reQuest)
+	
+	Capacità di canale dimostrata da Claude Shannon nel 1940.
+		C = B*logb2(1+S/N)
+
+		C 0 capacità del canale [bps
+		B = banda del canale [Hz]
+		S = potenza del segnale [W]
+		N = potenza del rumore [W]
+/**********/
+Giovedì 7 marzo 2019
+	
+Speigone sulla lezione di ieri (modulazione e trasmissione).
+Banda base (origine) e banda passante (lontana).
+Modulazione in banda traslata è un casino
+Efficienza spettrale media
+
+A  sin(2*pi*f *t+fi )
+ k           p     k
+
+Ak = ampiezza; fp = frequenza; fik = fase
+Modulazione multilivello
+
+s(t)  _______   r(t)                   r(t) = b * s(t+tau)  	b è la costante di attenuazione
+----->| H(f) |------->              
+S(f)  |______|  R(f) = s(t) * H(f)     R(f) = g * S(f)
+
+Attenuazione è rapporto tra potenze
+Codici correttori
+	Bit di parità: sono due bit messi in fondo alla stringa che fanno in modo che i bit in posizione dispari e pari rispettivamente siano entrambi pari
+	Es.  __________________
+        | 00111111100010|11|
+Cont.   |_______________|__|
+Dispari   0 1 2 3 4 4 5  6
+Pari       0 1 2 3 3 3 3  4
+
+IL LIVELLO APPLICATIVO
+
+Processi e socket, peer-to-peer, web, mail, DNS
+
+Studiamo i seguenti protocolli applicativi
+HTTP, SMTP, BitTorrent, Video streaming
+
+Creare un'applicazione di rete è scrivere un software che possa essere eseguito su diversi terminali e possa comunicare tramite la rete
+Obiettivo del laboratorio con applicazioni di rete è fare una cosa semplice che funzioni in rete
+
+I nodi della rete non hanno software applicativo, le applicazioni sono installate solo sui terminali
+Comunicazione tra processi. Attori: host, processo e IPC (comunicazione tra processi).
+/**********/
+Lunedì 11 marzo 2019
+
+Cosa contiene pagina HTTP?
+Locator: URL
+La pagina è fatta di oggetti (file HTML, applet java, video,...)
+URL composto da protocollo applicativo, indirizzo del server, porta e pagina richiesta
+
+HTTP è client-server con protocollo stateless (nessuna memoria sulle richieste è mantenuta sul server con il protocollo HTTP).
+La comunicazione è fatta con richieste e risposte (protocollo asimmetrico)
+HTTP si poggia su TCP e utilizza la porta server n.80 di default.
+
+2 modalità: non persistente e persistente
+	non p.: c'è una connessione per ogni oggetto, chiusa ogni volta che il trasferimento è terminato. (parallelo)
+	pers. : la connessione viene lasciata aperta e invia in serie le richieste una dietro l'altra
+
+Tempo impiegato per trasferimento in andata e ritorno: RTT, piccolo pacchetto
+Tempo totale è una sommatoria di RTT + tempo di trasferimento del file
+Le richieste HTTP
+	sono codificati in ASCII (utile perché leggibile, ma più dispendiosa in termini di bit occupati dal messaggio).
+	Nello header c'è il tipo di messaggio, host, user-agent, linguaggi accettati e se è persistente oppure no.
+	HTTP 1.1 è keep-alive (persistente) di default, la versione 1 era non persistente di default
+I metdodi HTTP:
+	GET		chiede pagina
+	HEAD 	chiede informazioni sul documento
+	POST	fornire input al server utilizzabile da un oggetto
+	PUT		memorizzare un documento nel server
+	DELETE	elimina documento
+Esempi di header:
+	cache-control:		info sulla cache
+	accept:				formati accettati
+	accept-language:	linguaggi accettati
+Le risposte HTTP
+	contiene lo status code, identificati da un codice di 3 caratteri.
+	1xx	info
+	2xx success
+	3xx redirect
+	4xx client error
+	5xx server error
+messaggi accompagnati da scritta in inglese
+Esempio pratico col telnet
+
+Contitional GET
+	Serve per non scaricare gli oggetti se non sono stati modificati dalla data dell'ultimo trasferimento
+	L'header da inserire è if-modified-since: <date>
+	Se l'oggetto non è modificato, viene resttuito il messaggio 304. Il browser visualizzerà la copia locale anziché quella sul server
+
+youtu.be/astJTu59BfY 	richiedere pagine con http1.1
+youtu.be/YfIILUI5S0E 	inviare get condizionato
+
+strumenti per l'analisi del traffico HTTP all'interno del browser web
+	Chrome dev tools
+trasferimento files con curl curl -o /dev/null -s -w "%{time_total}\n" www.antlab.polimi.it
+trasferimento file con telnet
+
+Esempio telnet:
+
+lorenzo@lorenzo-VirtualBox:~$ telnet antlab.elet.polimi.it 80
+Trying 131.175.187.69...
+Connected to antlab.elet.polimi.it.
+Escape character is '^]'.
+GET /images/antlab_small.jpg HTTP/1.0
+
+HTTP/1.1 302 Found
+Date: Mon, 11 Mar 2019 12:14:34 GMT
+Server: Apache
+Location: https:///images/antlab_small.jpg
+Content-Length: 216
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>302 Found</title>
+</head><body>
+<h1>Found</h1>
+<p>The document has moved <a href="https:///images/antlab_small.jpg">here</a>.</p>
+</body></html>
+Connection closed by foreign host.
+
+fine esempio. 
+
+Mantenere lo stato in HTTP: i cookies
+	Strumento utilizzato dal server per memorizzare qualcosa sul client
+Memoria condivisa: il PROXY
+	Le richieste inviate a qualunque server sono deviate verso una macchina chiamata PROXY, che risponderà a tutte le richieste che farò.
+	Il proxy chiederà al destinatario originario la risorsa e la inoltra al client.
+	È un intermediario. In aggiunta a ciò se l'oggetto è disponibile nella cache del proxy server esso risponde con l'oggetto.
+	I proxy sono APPLICATION GATEWAY
+
+Curiosità: differenze tra HTTP versione 2 e versione 1.1.
+	v2 è in binario e non in ascii, multiplazione, compressione header, servizio di server push (scarica anche elementi collegati).
+	DEMO: https://http2.akamai.com/demo
+	indexing e codifica differenziale
+
+Sicurezza in HTTP con il protocollo sicuro HTTPS
+	confidenzialità: solo chi può ricevere riceve
+	integrità: nessuno modifica i dati
+	autenticazione: chi invia è veramente chi dice di essere
+
+	Connessioni SSL/TLS: 1) handshake con autenticazione da ambo i lati. Poi vengono scambiate le chiavi di cifratura. 2)Trasferimento dati. 3) Chiusura connessione
+	Crittografia simmetrica ed asimmetrica (root certificate = certificati truffaldini)
+
+/**********/
+Giovedì 13 marzo 2019
+
+Il servizio di posta elettronica
+SMTP RFC 5321
+POP3 RFC 1939
+IMAP RFC 3501
+
+Il servizio consiste in un client aka user-agent, di un mail server, di un protocollo di invio (SMTP) e dei protocolli di accesso per scaricare la posta (POP3, IMAP)
+Ciascun server gestisce un dominio e gli utenti validi devono avere una casella che corrisponde ad un indirizzo valido (il dominio è quello dopo @)
+Il server di posta in uscita funge da proxy (riceve e poi invia, inoltra, fa da intermediario). 
+Questo è come funzionava, oggi c'è un livello di sicurezza in più col server in uscita che chiede l'autenticazione dell'utente.
+
+SMTP
+	Protocollo client-server che usa TCP con porta nota lato server 25.
+	Mette il messaggio in coda, apre connessione con il mail server del destinatario, trasferisce il messaggio e chiude la connessione TCP.
+	Comandi e risposte testuali in ASCII, come pure i messaggi.
+	
+	Esempio di trasferimento.
+	Colloquio tra client e server SMTP.
+	Messaggio composto da Header (to, from, cc, subject) e dal body.
+	I messaggi finiscono tutti con una punto soltanto su una linea
+
+	Multipurpose Internet Mail Extensions MIME (RFC 2045-2046)
+	Estende il formato dei messaggi email per trasferire dei contenuti diversi dal testo ASCII. (es. immagini, video, HTML)
+	Bisogna aggingere degli header
+	MIME-Version: 1.0
+	Content-Transfer-Encoding: base64
+	Content-type: image/jpeg
+	
+	Potrebbero anche esserci più parti in un testo (allegati).
+	Esempio di invio email
+Protocolli di accesso al mailbox attraverso 2 protocolli: IMAP o POP3. Può anche essere fatta attraverso HTTP per la webmail
+POP3. Più semplice e con meno funzionalità
+	- Connessione al server (TCP port #110)
+	Questi sono i comandi utilizzabili
+	- user: user lorenzo
+	- password: password prova123ssassa
+	Risposte del server: +OK oppure -ERR
+	Fase di transazione in cui il client fa
+		list
+		retr	
+		dele
+		quit
+IMAP: vantaggio delle directory
+	
+VIDEO: youtu.be/v4Zpywa8ag0
+Scopo: inviare una email da un mittente falso al proprio indirizzo di posta elettronica
+
+Conversione tra nomi simbolici e indirizzi:
+DNS - Domain Name System
+Converte da nome a numero (è un servizio di pagine gialle distribuito)
+
+È composto da database distribuito costituito da molti name servers con organizzazione gerarchica. Il servizio è basato su UDP.
+Servizi aggiuntivi: host aliasing (sinonimi), mail server aliasing, load distribution
+
+I server sono organizzati con la stessa gerarchia dei domini
+	.com		.it			.org		TLD (Top level Domain)
+bing		polimi		wikipedia		nome a dominio
+										
+
+La parte di organizzazione semplice, organizzazione un po' più complessa.
+13 root name servers (NS).
+Local name server è quello che fa da interfaccia tra utente e mondo dei server DNS.
+
+Server authoritative è responsabile di quel particolare hostname
+Se il server ce l'ha in cache e fornisce risposta senza contattare il server la risposta è non-authoritative
+Ogni host ha un LNS (local name server) che fornisce alle applicazioni i nomi a dominio e li tiene in cache
+
+Esempio di risoluzione di un nome simbolico in modalità iterativa
+Resource Record: 	NAME - VALUE - TYPE - TTL
+Caching con il tempo di vita dell'informazione (TTL) per pulire memorie da info obsolete.
+Type: esplicita utilizzo del DNS
+	A -> 	Name è il dominio di un host e value è l'indirizzo IP
+	NS ->	Name è domain e value è il nome di un server che può ottenere le informazioni relative al name
+	CNAME -> name è un alias per un host il cui nome canonico è in value
+	MX ->	name è un mail domain o alias, value 
+
+Come aggiungere un dominio nella rete DNS? Con i DNS registrars
+Esperimenti con dig
+Meccanismi di load balancing per DNS
+CDN (content distribution network [io lo ricordavo come content delivery network])
+	Nasce come soluzione al problema di gestire in maniera efficiente tanti contenuti verso tanti utenti molto lontani gli uni dagli altri
+	La mappatura è fatta attraverso un server DNS
+
+Applicazioni peer-to-peer
+	Il primo più famoso era napster
+	Protocollo distribuito ma registro centralizzato
+	gnutella non ha nessun server centrale, protocollo di pubblico dominio, client diversi
+	bittorrent: i tracker tengono traccia dei peer che partecipano ad un torrent. i file sono divisi in chunk
+		meccanismo di richiesta dei chuck partendo dai più rari
+/**********/
+Lunedì 18 marzo 2019 - 1mo laboratorio
+
+Daniele Moro è il responsabile laboratorio
+6 lezioni 3 prima la prova in itinere, 3 dopo
+le prime 3 python, le altre 3 con Cisco IOS e droga
+
+2 modalità 
+	-> creare file di testo ed eseguirlo con il comando python script.py
+	-> usare la shell interattiva chiamando python
+
+questa lezione la trovi a lab/20190318.py
