@@ -814,10 +814,14 @@ Lunedì 18 marzo 2019 - 1mo laboratorio
 
 Daniele Moro è il responsabile laboratorio
 6 lezioni 3 prima la prova in itinere, 3 dopo
-le prime 3 python, le altre 3 con Cisco IOS e droga
+le prime 3 python, le altre 3 con Cisco IOS CLI 
 
 2 modalità 
 	-> creare file di testo ed eseguirlo con il comando python script.py
 	-> usare la shell interattiva chiamando python
 
 questa lezione la trovi a lab/20190318.py
+
+/**********/
+Mercoledì 20 marzo 2019
+
