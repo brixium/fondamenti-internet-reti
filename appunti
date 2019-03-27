@@ -823,5 +823,118 @@ le prime 3 python, le altre 3 con Cisco IOS CLI
 questa lezione la trovi a lab/20190318.py
 
 /**********/
-Mercoledì 20 marzo 2019
+Giovedì 21 marzo 2019
+Il livello di trasporto - Cap.3
+UDP, TCP, controllo di flusso, controllo di congestione
+Su questa parte ci sono 2 laboratori (programmazione socket
+Il servizio di trasporto instaura collegamento tra le applicazioni su host remoti
+Rendono trasparente il trasporto dei messaggi alle applicazioni
+È presente solo nei terminali della rete
+Cosa fa? Multiplazione e demultiplexing
+	Più applicazioni che condividono uno stesso indirizzo IP possiedono diverse porte (lungh. fissa 16 bit)
+	Divisi in 3 parti: 
+		Well-known ports (0-1023): spesso lato server
+		Porte registrate (1024-49151): assegnate a specifiche applicazioni poco diffuse rispetto alle well-known
+		Numeri dinamici  (49152-65535): usate per la multiplazione nei client
+	Connessioni in parallelo sfruttano multiplazione per aprire più connessioni
+Servizio di buffering
+	Il sistema operativo crea due buffer (in entrata e in uscita) per ciascuna porta creata
+	Vale sia per i client che per server
+Servizio di rete non è affidabile (best effort). Il servizio di trasporto fornito può essere di vari tipi
+	- trasporto affidabile (messaggi consegnati in ordine corretto)
+	- trasporto non affidabile
+	- trasporto orientato alla connessione
+	- trasporto senza conn.
+Nella suite IP sono definiti 2 protocolli: UDP e TCP
+UDP trasmette e basta senza controlli; TCP regola la velocità di trasferimento in base alla ricezione e della rete
+UDP (User Datagram Protocol)
+	È il più semplice tra i due. Aggiunge ad IP solo mux/demux (indirizzamento porte) e CRC.
+	Header corto (8 byte) con poche informazioni
+	Minor latenza, più semplice e leggero.
+	Il checksum (controllo di errore) (in UDP è a 16 bit) viene calcolato considerando l'header UDP, uno pseudo-header IP ed i dati.
+		Funziona così: le informazioni vengono divise in blocchi di 16 bit. Il campo checksum è lasciato a 0. Poi si fa la somma binaria di tutti i blocchi in complemento a uno.
+		In ricezione si complementa il risultato della checksum e deve venire zero.
+	Prova cattura wireshark
+Trasporto affidabile
+	Il collegamento ideale è ricevere la stessa sequenza di trasmissione nello stesso ordine correttamente
+	Protocolli di ritrasmissione (canale di feedback, la comunicazione deve esser bidirezionale)
+		Obiettivo: integrità del messaggio/pacchetto, ordine sequenza, no duplicazione
+		Ciascuna trama ricevuta va riscontratapositivamento con un messaggio di ACK
+		A volte l'errore può essere segnalato con un NACK
+		La mancanza di ACK o la presenza di NACK segnala la necessità di ritrasmettere
+		La procedura di ripete finché la trama viene ricevuta correttamente
+		Controllo di integrità e recupero d'errore vengono usati da TCP.
+			I pacchetti possono andare persi a livello di rete (pacchetti scartati in coda)
+		Meccanismi usati: timeout e finestra di trasmissione
+	Il protocollo "stop and wait"
+		utilizza solo l'ACK e un contatore di timeout.
+		Funzionamento corretto solo se timeout>=2*tau+Tack
+		Serve la numerazione dei pacchetti (SN, #sequence) e degli ack (RN, #request). COsì facendo si evitano i duplicati e ack verso pacchetti corretti.
+		Efficienza del protocollo
+								     T               1
+		     	 EFFICIENZA  = -----------  = ---------------
+							   T+Tack+2tau    1+Tack/T+2tau/T
+
+		efficienza è bassa se T<<tau, quindi non adatto a situazioni con alto ritardo di propagazione e/o elevato ritmo di tx.
+		Protocollo utilizzato perché funziona bene su half-duplex. Bene su distanze brevi
+	Il protocollo Go-Back-N
+		Variante dello stop and wait.
+		Si inviano un numero max di pacchetti N (finestra). Se non ho ricevuto un pacchetto, si ritrasmettono tutti quelli non ricevuti a partire dal primo perso (max N pacchetti)
+		La finestra è sempre di N pacchetti ma è una sliding window e si muove a ritmo degli ack ricevuti.
+		Se non ci sono errori la trasmissione non si ferma mai (100% efficienza).
+		I pacchetti fuori sequenza vengono scartati. [Oggi esiste anche la variante che accetta pacchetti fuori sequenza]
+		Link applet che simula la connessione a pagina 34 delle slides.
+		Il riscontro (ACK) può essere collettivo, cioé non individuali che riguardano un solo pacchetto ma relativo a tutti i pacchetti precedenti.
+		Dimensionamento della finestra
+			La finestra ottimale coincide con il RTT (round trip time) (=T+tau+Tack+tau)
+					             T+Tack+2tau
+			numero minimo di N = -----------
+								   	  T
+			(Sincronismo degli ack dice il ritmo con cui vengono ricevuti, in caso normale =T. Sono un indicazione del tempo di trasmissione che stima la capacità del collo di bottiglia della rete)
+			La finestra può essere dimensionata in byte, bit, secondi, ...
+			Si complica il dimensionamento se non si conoscono i tempi di propagazione (tau), per esempio quando i tempi di attraversamento sono variabili oppure i pacchetti sono di lunghezza variabile
+			Rimedi:
+				fare la finestra grande. Svantaggio: in caso dierrore aumenta il ritardo e ritrasmissioni inutili.
+	Uso del NACK
+		Può abbreviare i tempi di ritrasmissione.
+		Ma se tra le informazioni corrotte c'è l'indirizzo sorgente? Il NACK va ad un indirizzo a caso.
+		Se arriva un pacchetto fuori sequenza (es. arrivano l'1 e il 3) invio subito il NACK 2. Tale cosa consente una ritrasmissione veloce
+		ACK ripetuto ha la stessa valenza di un NACK. TCP usa l'ACK ripetuto.
+	Go-back-N FULL DUPLEX
+		Il meccanismo di finestra mobile può essere fatto da entrambi i lati. Quindi entrambi gli host trasmettono dati e ack in senso opposto.
+		Quindi nell'header del pacchetto esiste il numero di sequenza ma anche il numero di ack in direzione opposta
+		Generazione del numero di sequenza e mantenere una variabile con il n SEQ successivo e un'altra var con dentro l'ACK da convalidare
+		Si mantengono aggiornate queste 2 variabili e usate ogni volta che arriva un pacchetto nuovo
+/**********/
+Lunedì 25 marzo 2019
+Il secondo laboratorio è lunedì prossimo
+	Go-back-N e piggy backing (slide 40)
+		i sequence n e gli ack (rn) sono inseriti nello header del pacchetto
+		RN assume il significato di prossimo pacchetto atteso
+	Regole go back n trasmettitore:
+		N -> dim.finestra
+		Nlast -> ultimo riscontro ricevuto
+		Nc -> numero corrente disponibile per pacchetto in trasmissione
+		regole:
+			ogni nuovo pacchetto da trasmettere ha un numero di sequenza. Se è >=Nlast+N, viene messo in attesa, Altrimenti viene assegnato Nc, Nc viene incrementata di 1, il pacchetto si invia e per ogni riscontro si aggiorna Nlast = Nc
+		In caso di scadenza del timer, la ritrasmissione riparte da Nlast
+	Logica ricevitore:
+		Se ricevo un pacchetto SN=RN, inoltro ai livelli superiri e RN=Rn+1
+		Ogni tanto manda al TX RN
+	Schema Go-back-N full duplex senza errori
+
+	Necessità di inizializzare i numeri SN e RN e un numero di tempo da quando si inizia a contare e scambiarsi info.
+	L'inizializzazione della variabile si fa ad un numero casuale per evitare qui pro quo.
+
+Controllo di flusso a finestra mobile
+	Buffer d ricezione limitato a W posizioni (numero posti liberi nel buffer) lato ricevitore
+	Ritmo di assorbimento dell'utente arbitrario
+	Obiettivo: regolare il ritmo di invio per evitare che pacchetti vadano persi perché trovano il buffer pieno
+	
+	Sliding window flow control
+		Se unito al go-back-n fa in modo che i pacchetti vengono inviati in base alla disponibilità del ricevente sia in velocità che nel buffer regolando la finestra di trasmissione
+		Esempio di uso del campo W
+		a volte il ricevitore mente per avere delle reazioni diverse dal trasmettitore
+	
+Adesso guardiamo qualche esercizio del protocollo di ritrasmissione
 
