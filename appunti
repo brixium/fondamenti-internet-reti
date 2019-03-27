@@ -937,4 +937,96 @@ Controllo di flusso a finestra mobile
 		a volte il ricevitore mente per avere delle reazioni diverse dal trasmettitore
 	
 Adesso guardiamo qualche esercizio del protocollo di ritrasmissione
+/**********/
+Mercoledì 27 marzo 2019
+
+Protocollo TCP (RFC 793 (1981), RFC 1122(1989) e successive implementazioni)
+Assicura il trasporto affidabile (sequenza corretta e senza errori e perdite di dati)
+È possibile costruire applicazioni con trasferimenti senza errori e ha semplificato il modo di progettare le applicazioni.
+Meccanismi di controllo di velocità e di congestione
+È alla base della net neutrality (tutti i flussi sono trattati equamente, soprattutto nella condivisione dello stesso link)
+Prima la rete era controllata dall'interno
+Il TCP è connection oriented, cioè ha una fase preliminare allo scambio dei pacchetti (3-way-handshake)
+Le connessioni TCP si appoggiano su una rete connectionless. Conn.TCP sono full-duplex (scambio di dati da ambo le parti) che può essere definito peer-to-peer perché il formato dei pacchetti è lo stesso in ambo i versi
+(half-duplex = la connessione è bidirezionale ma se trasmette uno l'altro deve stare ad ascoltare e poi trasmettere, tipo walkie-talkie)
+Il TCP accetta uno stream di byte, inseriti in un buffer. TCP poi riempie i segmenti in uscita. I segmenti hanno dimensioni variabili (con una lunghezza massima concordata).
+
+Per la numerazione dei byte e riscontri i meccanismi di ritrasmissione somigliano al goback-N
+	Ogni byte è numerato e ha un numero di seq.;
+	segmenti formati da gruppi di byte
+	dimensioni delle finestre in byte
+	Nell'header del segmento TCP è trasportato il numero di sequenza del primo byte del segmento e il primo+1 delle ack
+Campi dell'header
+	Source e destination port (16 bit ciascuna);
+	Sequence number e acknowledgment number (32 bit ciascuno);
+	16 bit di flag (1° è HLEN, lungh.header diviso 32 (lungh.min. = 20B; l.max = 40B)), 16 bit di window per il controllo di flusso;
+	checksum (16 bit) e urgent pointer (16b)
+	Options e padding (max 20 byte) servono per opzioni e padding per raggiungere una dimensione divisibile per 32 bit
+	---fine header---
+	Campo dati di circa 1460-1480 byte per farlo entrare su frame ethernet
+
+	I FLAG (1 bit ciascuno)
+	Il flag urgent dice a tcp di separare i dati urgenti dal resto che permettono di avere un flusso di controllo parallelamente ad un flusso dati (utilizzo poco frequente)
+	Il flag ACK vale 1 se il campo ack numer è valido, 0 se non è valido. normalmente lo è ma all'inizio (3W-Handshake)non è così
+	PUSH (PSH) forza l'invio delle informazioni il prima possibile (risultato pacchetti piccoli)
+	RST reset è per terminazione brusca della connessione, non è una bella cosa perché può creare problemi di inconistenza di stato nelle applicazioni. Putroppo è usato e il programmatore deve prevedere un timeout nel caso in cui la connessione resti appesa
+	SYN. Se=1, il #Seq è il primo della connessione. Con questo si fanno gli attacchi DDoS inviando pacchetti con SYN in massa
+	FIN serve per chiudere la connessione in modo soft
+Opzioni
+	No-operation e end of option servono come padding
+	MSS Maximum Segment Size
+		Val.min di default è 536B, MAX 65535B. Definisce la dim.max del segmento usata nella connessione TCP. Decisa dal mittente durante dla fase di setup.
+	Window scale - Fattore di scala della finestra
+		Default 1 ->misuriamo in byte, altrimenti prendo gruppi di byte pari a 2^fattore di scala.
+		Questo consente di esprimere con 16 bit dei numeri più grandi
+	...
+	http://www.iana.org/assignments/tcp-parameters/tcp-parameters.xhtml
+Servizi per porte note
+Setup delle connessioni
+	Prima del call setup le applicazioni sia client che server devono comunicare con il software TCP
+	1) I server sono sempre in ascolto, i client si attivano quando vogliono.
+	Demone in ascolto sulla porta è il PASSIVE OPEN (server) e aspetta che qualcuno si connetta sulla porta.
+	2) Il client invece effettua un ACTIVE OPEN, effettuando una connessione
+	3) il client TCP manda un messaggio con SYN=1 e scrive nel #seq un num. casuale. Eventualmente indica anche MSS e window scale
+	4) Il server risponde con un messaggio con flag SYN=1 e ACK=1. Invia a sua volta un #seq. casuale e fa l'ack della richiesta del SYN del client.
+	5) Pacchetto di ACK=1 inviato dal client verso il server. È il primo, un ACK puro, si inviano anche MSS e Window scaling. Dopo questo pacchetto la connessione si considera aperta
+	Quasi sempre nel pacchetto di ack puro vengono inseriti i primi dati trasmessi dall'applicazione
+
+	Lato server una volta che la connessione viene aperta, deve essere gestita (a volte forking)
+	Lato client niente di che
+
+	Chiusura connessione è in modo asimmetrico (prima da un lato, poi dall'altro)
+	Tear down
+	Client invia FIN=1; server risponde con una ACK=1 e invia tutti i pacchetti mancanti; server invia FIN=1; client risponde con un'ACK. Connessione chiusa.
+	Cattura wireshark TCP
+	C'è anche il timestamp 1322764305
+	
+	Implementazione del controllo di flusso.
+	Lato ricevitore.
+		Receiver window (RCVWND): spazio del buffer in ricezione disponibile per ricevere nuovi dati (mantenuto dal TCP in una variabile)
+		Si estende dall'ultimo byte inoltrato dall'applicazione fino alla fine del buffer
+		Il buffer di ricezione può riempirsi acnhe per congestione nel SO del ricevitore
+		La dimensione di RCWND è segnalata in ogni segmento inviato dal ricevitore al trasmettitore.
+		Quando il buffer si svuota, la finestra si sposta in avanti
+	Lato trasmettitore
+		Send window SNDWND è una parte inutilizzata del buffer che rappresenta i byte che possono essere trasmessi senza attendere ulteriori riscontri
+		Il trasmettitore tiene un buffer di trasmissione che tiene traccia dei dati trasmessi ma non ancora riscontrati e della dim della fin del ricevitore.
+		Il bffer di trasmissione parte dal pirimo byte nn ricontrato all'estremo della finestra del ricevitore
+	
+	Problema della finestra 
+		Silly window syndrome - lato ricevitore
+			il ricevitore è lento e legge pochi byte alla volta. Quindi chi trasmette invia pacchetti piccoli. Problema: a volte lo header occupa troppo spazio rispetto ai dati
+			Soluzione è l'algoritmo di Clark: il ricevitore mente al trasmettitore e indica una finestra nulla finché il buffer del ricevitore non si è svuotato per metà o per una porzione almeno pari al MSS
+		Silly window syndrome - lato trasmettitore
+			L'applicazione genera byte molto lentamente e segmenti molto piccoli man mano che vengono prodotti
+
+		Soluzione: algoritmo di Nagle: i primi pacchetti piccoli, quelli dopo grossi sufficientemente per riempire un MSS oppure invia subito quando riceve un'ACK
+	
+	Funzione PUSH
+		
+	Dati URGENT
+		->FTP utilizza una serie di comandi inviati (CONTROLLO) parallelamente all'invio e alla ricezione dei file (DATI) sfruttando urgent
+	Controllo di errore in TCP 
+		È simile a quello del Go-back-N con timeout.
+		Differenze: TCP mantiene i pacchetti ricevuti fuori sequenza
 
