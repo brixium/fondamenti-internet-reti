@@ -1,7 +1,7 @@
-Appunti di fondamenti di internet e reti - pro.ANtonio Capone
+Appunti di fondamenti di internet e reti - prof.Antonio Capone
 /*********/
 25 febbraio 2019
-/*********/
+
 Lezione introduttiva
 antonio.capone@polimi.it	0223993449
 subject #FIR
@@ -1029,4 +1029,69 @@ Setup delle connessioni
 	Controllo di errore in TCP 
 		È simile a quello del Go-back-N con timeout.
 		Differenze: TCP mantiene i pacchetti ricevuti fuori sequenza
+	Gestione del timeout
+		Questo dipende dal RTT: se il server è vicino è diverso se il server sta distante
+		Problemi: se RTT lungo e timeout troppo piccolo, ritrasmissione troppo frequente, bisogna avere pazienza. Timeout troppo lungo impedisce recupero veloce.
+		TCP misura il RTT dinamicamente.
+		Stima del RTT attraverso gli algoritmi di Karn e Jacobson. (empirico)
+			Stima del valor medio sulla base delle misure. Usiamo quello smoothed di RTT:
+				(i)
+			SRTT    = (1-alfa)*SRTT + alfa* e altre cose che non o fatto in tempo a  copiare
 
+			Caloclo della deviazione (DEV) = |RTT^i-SRTT^(i-1)| e calcolo della deviazione smoothed
+
+			TIMEOUT = SRTT + 4*DEV
+			All'inizio il timout è 1 secondo.
+			Dopo una ritrasmissione sarebbe meglio passare all'algoritmo di Karn.
+			RTT non viene aggiornato, iltimeout è moltiplicato per un valore fisso (2), il timeout cresce fino ad un max., dopo un numero max di ritrasmissioni la conn. è chiusa
+			Timer di PERSISTENZA: ??? da recuperare le slide
+				se il destinat
+				per evitare questa situazione si usa un timer di p. che viene attivato quando arriva un segmento con finestra nulla
+				se il timer di p. scade viene inviato un piccolo pacchetto sonda
+
+/**********/			
+Giovedì 28 marzo 2019
+Controllo di congestione, delegato al TCP
+	obiettivo: regolare il traffico senza il vigile, ognuno si regola da solo (controllo end-to-end).
+	(ECN - Explicit Congestion Notification, ultima trovata per il controllo di congestione)
+	aggiungiamo delle variabili: la congestion window (CWND). Ogni istante vengono confrontate la CWND e la RCVWND, quella minore trale due è utilizzata.
+	CWND si basa sulla velocità sulla banda di rete. (è più difficicle saperlo perché la rete non collabora)
+	La ricerca della velocità ideale si basa sui tentativi effettuati. Si aumenta la velocità finché la velocità è troppo alta.
+	A quel punto scadrà un timeout e ci sarà un evento di congestione = perdita dei pacchetti)
+	Meccanismo basato su 2 meccanismi: slow start e congestion avoidance
+	Per decidere quale dei due utilizzare si usa la variabile slow start treshold (SSTRESH).
+
+	Slow start:
+		Si parte lentamente con l'invio di 1 segmento di dimensione massima (1).
+		Ogni volta che arriva un ACK, questo valore viene incrementato di 1. (crescita esponenziale)
+		Parte un pacchetto e torna un ACK. Trasmetto 2 pacchetti e arrivano 2 ack. Ciascuno di questi 2 ack genera 2 pacchetti a sua volta (tot. 4). Poi 8, 16, 32, ...
+		
+		L'incremento può andare avanti finché: evento di congestione, CWND<SSHTRESH, CWND<RCWND
+		Insieme alla finestra aumenta anche il ritmo di trasmissione stimato così:
+		R = CWND/RTT in bps
+	
+	Limitazioni: collegamento in uscita dal dispositivo oppure in uscita dal router
+	Un link è congestionato anche quando la somma dei ritmi di trasmissione dei flussi che lo attraversano è maggiore della sua capacità
+	___
+	\   R  > C
+	/__  i
+	 i
+
+	Scade un timeout di ritrasmissione.
+		Il TCP pone CWND a 1*MSS.
+		Si pone SSTRESH al massimo tra 2*MSS e FlightSize/2 (che è il numero di pacchetti trasmessi e mai tornati indietro. Spesso FlightSIze è pari all'ultima finestra di congestione
+		
+	Come risultato se CWND è minore di SSTRESH si entra in slow start.
+	Il TX trasmette tutti i segmenti andati persi (Go-back-N)
+	Quando CWND >= SS treshold passo a CONGESTION AVOIDANCE
+	
+	Congestion avoidance (incremento frazionario)
+		Si incrementa la CWND di 1/CWND ad ogni ACK ricevuto.
+
+		La finestra continua ad aumentare lentamente (linearmente con coeff.angolare piccolo)
+		
+	(Meccanismo del TCP per quando si è a regime
+		\-> Fast retransmit e fast recovery.
+		Fast retransmit: quando perdi un pacchetto, contrariamente al go-back-N, fa così.
+			Quando un pacchetto viene perso, il contatore ACK del ricevitore non è aggiornato. La terza volta che TX riceve lo stesso valore di ack dal ricevitore, TX interpreta questo come un NACK e procede a reinviare il pacchetto perso. Dopodiché continua ad inviare la sequenza di byte nella coda.
+	)
