@@ -1090,8 +1090,32 @@ Controllo di congestione, delegato al TCP
 
 		La finestra continua ad aumentare lentamente (linearmente con coeff.angolare piccolo)
 		
-	(Meccanismo del TCP per quando si è a regime
+	Meccanismo del TCP per quando si è a regime
 		\-> Fast retransmit e fast recovery.
 		Fast retransmit: quando perdi un pacchetto, contrariamente al go-back-N, fa così.
 			Quando un pacchetto viene perso, il contatore ACK del ricevitore non è aggiornato. La terza volta che TX riceve lo stesso valore di ack dal ricevitore, TX interpreta questo come un NACK e procede a reinviare il pacchetto perso. Dopodiché continua ad inviare la sequenza di byte nella coda.
-	)
+
+		Il fast recovery consiste nel portare la congestion window NON più a 1 BENSÌ a quello di prima del timeout diviso 2.
+		L'andamento che vedo in rete è tipo così: /|/|/|/|/|/|/|/|/ a dente di sega 
+		Noi ci fermiamo a questa prima versione del TCP, che porta il nome di una località balneare, il terzo si chiama vegas
+
+TCP e sistemi operativi
+	la versione base è Tahoe, quella di questo corso.
+	Per Windows abbiamo:
+		Reno / New Reno
+		SACK
+		ECN
+		F-RTO
+		CTCP
+	Per Linux:
+		BIC: Binary Increase Congestion control (fino alla 2.6.18)
+		CUBIC = quella più usata (da 2.6.19 a 3.1)
+		PRR: Proportional Rate Reduction (dalla 3.2)
+	Per MacOS:
+		MacTCP(fino a 7.5.1) e Open Transport(dalla 7.5.2 alla 9.2.2)
+		CUBIC (dalla 10.10) e ECN (dalla 10.11 in poi)
+
+Condivisione equa delle risorse
+
+Flussi grandi e flussi piccoli TCP su internet
+Elephant e Mice flows. In alcune versioni i flussi elefanti vengono spaventati dai flussi topolino
