@@ -1119,3 +1119,140 @@ Condivisione equa delle risorse
 
 Flussi grandi e flussi piccoli TCP su internet
 Elephant e Mice flows. In alcune versioni i flussi elefanti vengono spaventati dai flussi topolino
+/********/
+Mercoledì 3 aprile 2019
+Esercizi sul livello di trasporto
+Es.1
+
+Canale: 1Mb/s
+tempo di propagazione (tau) = 250
+(L) lunghezza delle trame = 2000 bit
+    L    2000
+T = _ = ______ = 2*10^3 s = 2ms
+    C   1*10^6
+
+RTT = T+2*tau = 502 ms
+Per il GO-BACK-N: dimensionare la finestra minima per max efficienza
+Se N*T>= RTT, allora N >= RTT/T = intero superiore di[502/2] = 251
+Nel caso STOP and WAIT calcolo efficienza max
+N = 1
+q = T/RTT = 2/502 = 1/251 (inverso della finestra GO-back-N)
+
+Es.2
+tau = 24* T
+F = 1000 pacchetti
+Tack = T
+(non dato ma T di timeout (Tout) = 100*T)
+?= n di pacchetti trasmessi inutilmente se W = 100 (lungh.finestra) quando
+	a. si sbaglia il primo pacchetto del file
+	b. si sbagliano il primo e il 100esimo pacchetto del file
+	c. si sbaglia l'ACK del primo pacchetto del file
+	d. si sbaglia l'ACK del prim e del 100esimo pacchetto del file
+a. dopo avere inviato 100 pacchetti, riprende la trasmissione regolare dal primo, quindi il numero è 100
+b. 100 come prima perché una volta scaduto il primo, viene ritrasmesso tutto da capo e il 100esimo viene recuperato nella prima ritrasmissione
+c. non succede nulla perché l'ack è cumulativo e quando arriva il secondo pacchetto convalida anche il primo
+d. non succede niente, vedi sopra + 101esimo
+
+Esercizio 3:
+errore sui pacchetti: 1/10
+errore su ack: no
+timeout minimo è pari al RTT
+calcolare l'efficienza in numero di pacchetti corretti sul totale
+9/10
+Se il tempo di propagazione tau = n*T e Tack=T, calcolare efficienza trasmissiva temporale totale.
+      9T          9T
+n=---------- = ---------   n è la lettera eta greca
+|  10(2T+2nt)   20T(1+n)   |
+
+Esercizio 4:
+tau1 = tau2 = 500 microsecondi
+C1 = 100 Mbps, C2 = 200 Mbps
+F = 1250 MB diviso in pacchetti con L = 10'000 bit con header trascurabile
+
+calcolare il tempo in cui si riceve l'ultimo bit nei seguenti casi:
+	1) i pacchetti sono trasmessi alla max velocità
+	2) 
+	3)
+1)
+     F    1250*8*10^6
+n = --- = -----------  = 10^6 bit
+	 L      10'000
+
+      L     10'000
+T1 = --- = -------- = 100*10^-6 = 100microsec
+     C1    100*10^6
+
+T2 = L/C2 = 50 microsec
+
+Ttot = 10^6+*T1+T2+2tau = 100,0015 s
+2) Utilizzando stop and wait end-to-end e Tack = T
+RTT = 2*(T1+tau1+T2+tau2) secondo quanto scritto sul testoh!
+RTT = 2,3 ms
+Ttot = 10^6*RTT - RTT/2 = 2300s - (0,0023/2) 
+3)stop and wait applicato su ciascun collegamento separatamentea
+RTT1 = 2T1+2tau = 1,2ms
+RTT2 = 2T2+2tau = 1,1ms
+
+
+siccome RTT2<RTT1 quando arriva il pacchetto posso andare avanti 
+Ttot= 10^6 * RTT1 - (RTT1/2) + (RTT2/2) = 1200s - 0,6 + 0,55 = 1199,99995s
+
+Esercizio 5:
+STOP and WAIT. Difficoltà è nella dimensione dell'ultimo pezzo di file
+Idem es.6
+se viene un numero frazionario prendere intero inferiore e poi calcolare
+c'è anche lo header del protocollo
+
+Esercizio 7:
+Due rack A e B comunicano tramite link (C) = 10Gbps di lunghezza 16m in F.O
+File (F) = 375 byte direzione A->B.
+Usiamo GO-back-N con queste caratteristiche:
+Lack = 10B
+Lfmax = 60B dei quali 10B di header
+Tempo di elaborazione dei nodi trascurabile;
+Ampiezza finestra (Ws) = 4
+Timeout = 3s
+
+Calcolare:
+	a) tempo di trasferimento Tgbn del segmento dati
+	b) throughput dati effettivo THRgbn della connessione
+	c) dimensione minima W's della finestra di trasmissione per cui si raggiunge la eta(max) = efficienza massima
+
+n = intero inferiore(F/Dfmax) = 7
+Dflast = 375 - 7*50 = 25B =	200b
+Llast = H+Dflast =    35B =	280b
+
+Tfmax = Lfmax/C = 48ns
+Tflast = Lflast/C = 28ns
+Tack = Lack/C = 8ns
+tau = Llink/(2*velocità luce/3) = 80ns
+RTT = Tfmax+2tau+Tack = 48+8+160 = 216 ns
+NTfmax = 4*48 = 192 ns
+a)
+	Ttot = Tfmax+tau+Tack+tau+3Tfmax+Tflast+tau+Tack+tau
+		 = RTT+3Tfmax+Tflast+Tack+2tau= 556ns
+	THR = 375 * 8 / Ttot = 5,4 Gbps
+b)         RTT      216
+	W's =-------- = ---- = 5
+	      Tfmax      48
+
+	Ttot = 7*Tfmax+Tflast+2tau
+	THR = 375 * 8 / Ttot = 5,64 Gbps
+
+Esercizio 8
+A->B
+C = 160 Mbps
+d = 4000 km
+Ws = 5
+n = 10
+Lmax = 125'080 B = 1'000'640 b
+Lflast = 80'080 B = 640'640 b
+Lack = 80 B = 640 b
+
+tau = 5microsecondi al kilometro = 20 ms
+Tmax = Lmax/C = 6,25 ms
+Tlast = 4 ms
+Tack = 4 microsecondi
+
+RTT = Tmax+Tack+2tau = 46,25 ms 
+
