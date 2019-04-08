@@ -14,15 +14,15 @@ clientSocket = socket(AF_INET, SOCK_DGRAM)
 message = input("Inserisci il messaggio: ")
 
 #modifica 2: gestisco l'eccezione con i blocchi try, except e finally
-try:
-	#invio messaggio
-	clientSocket.sendto(message.encode('utf8'), (serverName, serverPort))
-		#primo parametro è il messaggio codificato con UTF-8
-		#secondo è una tupla contente: indirizzo del server,porta
-	
-	#modifica 2: impostiamo un timeout (di n secondi) sulla connessione in uscita
-	clientSocket.settimeout(2)
-	
+
+#invio messaggio
+clientSocket.sendto(message.encode('utf8'), (serverName, serverPort))
+	#primo parametro è il messaggio codificato con UTF-8
+	#secondo è una tupla contente: indirizzo del server,porta
+
+#modifica 2: impostiamo un timeout (di n secondi) sulla connessione in uscita
+clientSocket.settimeout(2)
+try:	
 	#riceviamo il messaggio in uscita dal server. Il metodo restituisce queste due cose
 	messaggioModificato, serverAddress = clientSocket.recvfrom(2048)
 		#parametro della receive è la lunghezza del buffer
@@ -30,7 +30,7 @@ try:
 	messaggioModificato = messaggioModificato.decode('utf-8')
 	print("Messaggio modificato: ", messaggioModificato)
 	#chiudiamo il socket in ascolto sulla porta
-except:
+except: #except TimeoutError <- solamente per il timeout e fa una certa cosa
 	print("C'è stato un erroraccio e ora morirai")
 finally:
 	clientSocket.close()

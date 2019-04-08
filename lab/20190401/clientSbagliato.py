@@ -8,3 +8,4 @@ message = input("Mani in alto, dammi i soldi! ")
 clientSocket.sendto(message.encode('utf8'), (serverName, serverPort))
 clientSocket.close()
 
+# non cambia niente perché è UDP (non affidabile)
