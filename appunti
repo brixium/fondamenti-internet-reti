@@ -1255,4 +1255,215 @@ Tlast = 4 ms
 Tack = 4 microsecondi
 
 RTT = Tmax+Tack+2tau = 46,25 ms 
+/*********/
+Lunedì 8 aprile 2019
+Lezione di laboratorio
 
+
+
+
+/**/
+Lunedì 29 aprile 2019
+Il livello di rete
+È diviso in due piani:
+	- Piano dati (Data Plane): IP. Contiene informazioni dei piani superiori.
+	- Piano di Controllo (Control Plane): ICMP, ARP, RARP, OSPF, RIP. Non contengono informazioni generate dall'utente.
+Funzioni fondamentali:
+	Indirizzamento: identificazione univoca dell'interfaccia di rete di un host/router.
+	Inoltro/forwarding: Funzione locale con cui il router trasferisce i pacchetti da un ingresso ad un'uscita, leggendo la tabella.
+	Instradamento/routing: processo che determina i percorsi dei pacchetti dalla sorgente alla destinazione. Globalmente è svolto dagli algoritmi do routing
+Data plane a livello rete
+	La strada che seguono i pacchetti IP, dall'incapsulazione alla consegna al destinatario che spacchetta
+	Caratteristiche: best effort e connectionless. I router hanno tabelle di instradamento con le quali decidono dove inviare i pacchetti. Potenzialmente i pacchetti potrebbero percorrere strade diverse tra sorgente e destinazione (in realtà dipendono dalle tabelle di instradamento).
+Funzioni base di un router: leggono il valore di header e decidere dove inoltrare (inoltro). Algoritmo che crea ed aggiorna le tabelle di routing (controllo)(ottimizzato hw/sw)
+
+Indirizzo IPv4: è a 32 bit raggruppato byte per byte divisi con un punto.
+	Gli indirizzi IP non sono relativi alla macchina ma all'interfaccia di rete e anche alla rete per come è stata pensata.
+	Ciascun indirizzo pubblico deve essere univoco. Ogni operatore di rete ha un set di indirizzi assegnati ad esso.
+	IP addr diviso in due parti: netid (numero della rete) e hostid (numero assegnato all'interfaccia)
+Indirizzamento CIDR (Classless Inter Domain Routing)
+	Indirizzi flessibili introdotti in via definitiva dal settembre 1993. RFC 1517 - 1520.
+	Viene introdotto il prefix length w.x.y.z/n per indicare la lunghezza di una rete.
+	Es. 134.76.96.0/19 -> 2^(32-19) = 2^13 = 8192 indirizzi ip adiacenti da 134.76.96.0 a 134.76.127.255
+	Questo sistema ha rivoluzionato il sistema classful che vedremo tra poco.
+	Netmask = numero a 32 bit che indica quanti e quali bit sono assegnati al NetID. Viene indicata con una notazione decimale puntata.
+	Se faccio l'operazione di AND bitwise tra netmask e indirizzo IP il risultato è la rete a cui appartine l'indirizzo
+	Attenzione a non assegnare a due macchine lo stesso indirizzo IP.
+	Il primo e l'ultimo indirizzo IP di una rete non sono assegnabili a degli host
+
+	Blocchi di indirizzi speciali:
+		/*Questi potrebbero essere etichettati in maniera sbagliata*/
+		Classe A: 10.0.0.0/8
+		Classe B: 172.16.0.0/16
+		Classe C: 192.168.0.0/16
+	Questi tre blocchi si possono utilizzare solo su reti private e sono riutilizzabili in tutte le reti private
+	Broadcast limitato = 255.255.255.255. Viene inviato a tutti gli host della stessa rete del mittente
+	Gli indirizzi che iniziano con dei bit a 0 vogliono riferirsi alla stessa rete. Esempio: 0.0.21.173/16 indica un host nella stessa retedel mittente
+	0.0.0.0 indica se stesso quando non conosce il suo indirizzo
+	127.x.x.x è l'indirizzo di loopback, quindi non esce mai dalla macchina
+	Gli indirizzi IP sono assegnati da IANA (Internet Assigned Numbers Authority), dipartimento di ICANN. Amministra anche DNS root
+	Esistono 5 entità locali per la assegnazione di indirizzi agli operatori di rete
+	Gli indirizzi IPv4 sono esauriti
+	Indirizzamento classful
+		Classe A, B e C sono tagliati con l'accetta e hanno dei blocchi di dimensione fissa per il netID di 1,2 e 3 byte rispettivamente.
+Subnetting
+	Problema: reti IP troppo grandi. 
+	L'indirizzo IP del politecnico era una classe B 131.175.0.0/16.
+	NetID viene suddiviso ulteriormente, vnegono sottratti indirizzi per la parte di hostID e dati al subnetID.
+	Esempio: ho una rete 128.134.0.0/16 dalla quale creare almeno 1000 sottoreti.
+	2^10 = 1024 sottoreti aggiungendo 10 sottoreti. La nuova rete avrà 10+16 bit di host e 32-26 bit di host. La nuova netmask sarà 255.255.255.192
+
+	Blocchi di dimensione diversa: subnetting a più stadi
+	Variable Length Subnet Mask (VLSM)
+	
+/***/
+Giovedì 2 maggio 2019
+Inoltro dei pacchetti
+	Con gli indirizzi IP assumiamo che tutti gli host siano collegati alla stessa rete (Inoltro diretto). È previsto anche intoltro indiretto
+	Indirizzi IP e indirizzi MAC
+	Come si capisce se si è sulla stessa rete? (inoltro diretto) se facendo l'and tra ip sorgente e netmask, stessa cosa per il destinatario
+	Se l'indirizzo non appartiene alla stessa rete, il pacchetto passa al router, configurato inizialmente (default gateway, chepperò è un termine generico).
+	Una volta arrivato al router, ci si basa sulle tabelle di routing per l'inoltro.
+	Caratteristiche per l'inoltro:
+		- destination base (ci si basa sull'indirizzo di destinazione)
+		- nelle tabelle di routing per ogni rete di destinazione è indicato il prossimo router a cui inviare il pacchetto
+	Nelle tabelle di routing sono indicati: netID, netmask e next hop.
+	Rotta = riga della tabella
+	Ulteriore riga (autoconfigurata) che indica l'interfaccia di uscita
+	La netmask dell'indirizzo di destinazione non è nota globalmente, ci si basa quindi sulla netmask della rete
+	Se non si può fare l'inoltro diretto, lo si fa indiretto (con la tabella).
+	Destinazione di default esiste anche nei router ed è possibile farla compatibilmente con la topologia fisica del router 
+	Se vengono trovate più rotte compatibili, si segue quella con il prefix length più lungo (longest prefix match).
+	La rotta di default ha come indirizzo 0.0.0.0 e netmask uguale (0.0.0.0), il cui confronto dà esito positivo. È poi segnato il next hop.
+	/*6666C@1337r*/
+Il supernetting
+	C'è il problema che se creo tante reti si riempiono le tabelle di routing, quindi bene tenerle corte.
+	Se le reti sono contigue e potenze di 2, posso definire una unica riga che le copre tutte (aggiustando netID e netmask)
+	Le tabelle di instradamento di ingresso sono di qualche decina di righe. Quelle degli ISP di 1mo livello, della propria rete sono centinaia di rotte. Quelli di trasnito centinaia di migliaia.
+
+Il livello di rete: IP, ICMP, ARP, DHCP, NAT
+	IP: connectionless packet-oriented, non affidabile, assegna un indirizzo universalmente riconosciuto.
+	Frammentazione/defrag (solo IPv4): se il pacchetto IP è più lungo della dimensione del frame, si occupa di frammentare il pacchetto e poi di rimetterlo insieme una volta rrivato.
+	Campo TTL (Time-to-live): è il numero massimo di passaggi tra router che un pacchetto può fare
+	Header IP
+		versione (4b), HLEN = header length (4b), TOS(DS) (type of service, 8b) serve per distinguere i pacchetti tra di loro, total length (16b).
+		Fragment identification (16b) serve per capire i pacchetti frammentati, flags(3b), frag.offset (13b) per rimettere insieme i packets.
+		TTL Time To Live (8b), Protocol per capire quale protocollo superiore si utilizzano, quindi mux/demux (8b), header checksum (16b).
+		Source e destination address (32b each).
+	Descrizione parti header
+		TOS è diviso in DSCP ed ECN (quest'ultimo utilizzato a volte)
+		Offset è il numero del primo byte / 8;
+		Flags: (M)ore è pari a 0 solo nell'ultimo segmento; (D)on't fragment
+		Opzioni (<40B) servono a fare testing, debug di rete, analisi di congruenza netmask, mini-sincronizzazione. Oggi non si usano più perché ci sono protocolli più efficienti che svolgono lo stesso lavoro.
+	Struttura implementativa protocollo IP
+	Tutti passano dal processing module
+	Reassembly module è attraversato solo quando si arriva alla destinazione del pacchetto.
+	Routing module e fragmentation è per l'invio del pacchetto e la frammentazione
+
+	Control Plane: protocolli di gestione
+		ICMP: internet control message protocol. Server per gestire messaggi di gestione di errore tra host e router. ICMP usa IP, quindi sta a livello 4 anche se è a stretto contatto con IP e ne utilizza le informazioni
+			Messaggi di errore:
+				Time exceeded (type 11)
+					Codici di errore (0 lo invia un router, 1 dall'host destinazione)
+				Destination unreachable (type 3) -> usually non ci sono router settati
+					Ci sono codici di errore diversi: network unr., host u., protocolo u., ...
+			Query
+				Echo request/Reply (keep-alive) type 8, servono per diagnostica
+					-> c'è un identificatore comune e un numero di sequenza
+			
+			Il protocollo non fa correzione di errori ma solo notifica. Il messaggio contiene lo header del pacchetto compromesso e i primi 8 byte dello stesso
+			Redirect.
+		Traceroute si basa sulle echo request e il TTL. All'inizio mette il TTL=1 e poi il router risponde, poi manda il TTL=2, eccetera...finché non arriva alla fine.
+		Profo ci esorta a sperimentare.
+
+/**/
+Lunedì 6 maggio 2019
+	Continuando nel control plane, trattiamo l'ARP, RARP e DHCP
+		Address Resolution Protocol (ARP) consente di gestire la corrispondenza tra indirizzi IP e MAC.
+		Sia host che router fanno uso di tabelle ARP. Se la macchina non trova l'indirizzo MAC della destinazione, viene inviato un messaggio broadcast di ARP-request.
+		L'host proprietario dell'indirizzo IP cercato risponde in unicast (ARP reply) al mittente.
+		Il messaggio broadcast ARP ha come indirizzo fisico di destinazione ff:ff:ff:ff:ff:ff (tutti bit a 1, come per IP); come indirizzo di sorgente possiede quello della macchina che l'ha richiesto.
+		Non ha senso fare ARP request su altre reti/sottoreti.
+		Nella ARP request ci sono gli indirizzi IP e MAC del mittente e del destinatario:
+		ARP request:	IPmittente, MACmittente, IPdestinatario, MACdestinatarioA = 00:00:00:00:00:00 (perché sconosciuto)
+		ARP reply = ARP request tranne per il MAC dell'allora destinatario, ora mittente, che inserisce il proprio
+		Le tabelle ARP vengono tenute in memoria e dopo un po'sono cancellate se non vengono refreshate (di solito tempo breve umano)
+		ARP reply gratuite servono per notificare quando cambia una corrispondenza IP-MAC e notificare la rete locale.
+		
+		RARP - Reverse ARP
+		Dato l'indirizzo MAC, mi interessa sapere l'indirizzo IP. 
+		Oggi è stato soppiantato da DHCP.
+		Serviva per avviare una macchina senza disco, né sistema operativo, che veniva caricato tramite un server BOOT, il quale gli assegnava anche un indirizzo IP e gli passava il SO.
+		
+		DHCP - Dynamic Host Configuration Protocol (RFC 2131) è di livello 5 ed usa UDP
+		Configurazione e fornitura degli IP centralizzata in un server.
+		Le associazioni possono essere:
+			Statica: stessi IP per gli host
+			Automatica: automatizzata dal server
+			Dinamica: l'insieme degli indirizzi IP è più piccolo degli host che possono utilizzarlo (mi sembra strano, leggi pagina wikipedia)
+			(Secondo wikipedia allocazione dinamica = quella automatica MA assegna gli indirizzi in modo casuale al contrario di quella automatica che si ricorda di assegnare gli stessi indirizzi alle stesse macchine)
+		Associazione dinamica: l'IP non è fisso ma dato in lease agli host, che devono rinnovarlo
+		
+		Come funziona DHCP?
+			1) Il client invia un DHCP DISCOVER message nella rete con IP sorgente 0.0.0.0
+			2) I server DHCP rispondono con un DHCP OFFER
+			3) Il client accetta
+			4) Il server invia la configurazione al client (IP addr, netmask, next hop, DNS server)
+			5) Il client rinnova il lease
+			6) Il client rilascia l'indirizzo assegnato con DHCP RELEASE
+
+		DHCP relay: ci sono più server che ascoltano le richeste in locale e lo inviano ad un DHCP server in un altra rete. In quest'ultimo server ci saranno tutti i piani di indirizzi per tutte le reti. Quel server invia direttamente al mittente la risposta DHCP.
+	
+		Porte 68 (sorgente) e 67 (destinazione); IP sorgente: 0.0.0.0, IP destinazione è broacast (255.255.255.255)
+
+Reti private e intranet
+	(cenno storico ad Asynchronous Transfer Mode)
+	La rete privata si può dividere in sottoreti
+	Servizi offerti dalla intranet diversi da quelli su internet
+	Indirizzamento privato
+	DMZ - zona demilitarizzata
+	
+	NAT (network address translation) e proxy
+	
+	Indirizzi pubblici su una intranet stanno sul router semplice oppure su un proxy applicativo;
+	Connessione tramite server proxy:
+		intranet e internet scollegate a livello IP; funziona sia con indirizzamento pubblico che privato; il proxy parla con l'esterno con il suo indirizzo pubblico; occorre avere un proxy per tutte le applicazioni
+	I proxy sono application gateway
+
+	NAT: Network Address Translation
+		->deve avere un pool di indirizzi pubblici disponibili
+		Un pacchetto che ha un indirizzo privato che cerca di contattare l'esterno incontra il NAT nel router. Al livello 3, traduce l'indirizzo privato in quello pubblico e lo spedisce.
+		Il server NAT deve ricordarsi delle corrispondenze (con delle tabelle) tra indirizzo interno ed esterno in ambo le direzioni. Di base (basic NAT) il primo pacchetto deve passare da dentro a fuori e poi si può andare in entrambi i versi.
+		Outbound NAT = da dentro verso fuori
+		La corrispondenza può essere statica o dinamica.
+		NAPT(network address port translation) oppure PAT , protocollo con cui si traducono indirizzi di livello 3 e di livello 4.
+		NAT bidirezionale, in cui il primo pacchetto può andare in ambo le direzioni.
+
+		Caratteristiche comuni:
+		- Transparent Address Translation
+			associazione trasparente alle stazioni
+			associazione statica (inefficiente) oppure dinamica(+ complessa)
+		- Transparent Routing
+			routing gestito in modo coerente all'indirizzamento
+		- ICMP Packet Translation
+			anche gli indirizzi IP in ICMP vanno mappati
+		
+		Associazione dinamica associa più indirizzi privati a meno indirizzi pubblici.(forse, questa non so es è giusta)
+		Si fa uso di timer che devono essere sincronizzati con la fine della trasmissione
+		Application Level Gateway
+		Traditional NAT è outbound NAT. 2 sotto-tipi
+			- basic NAT
+				viene traslato solo l'indirizzo IP
+				corrispondenza 1:1 tra indirizzo pubblici e privati
+				può esserci un blocco quando si è in tanti a trasmettere verso l'esterno
+			- NAPT (PAT)
+				Viene traslata la coppia IP:porta (32bit+16bit)
+				Molti indirizzi interno possono utilizzare lo stesso indirizzo esterno
+				
+		Bi-directional NAT
+			Si può iniziare una sessione in entrambi i versi.
+			Ad una macchina viene assegnato un indirizzo IP statico
+			port forwarding
+			dynamic DNS server
+
+			NAT è problematico per IPsec e Applicazioni che trasferiscono IP o meccanismi di cifratura
