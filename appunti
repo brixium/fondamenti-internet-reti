@@ -1467,3 +1467,152 @@ Reti private e intranet
 			dynamic DNS server
 
 			NAT è problematico per IPsec e Applicazioni che trasferiscono IP o meccanismi di cifratura
+/**/
+Giovedì 9 maggio 2019
+4) Reti parte C: algoritmi di instradamento
+Agenda: instradamento in rete e cose.
+
+Routing unicast: consente a due nodi non direttamente collegati di comunicare tra di loro (entità di livello 3)
+Politica di routing (o algoritmo di routing) è quella che definisce i criteri di scelta del percorso dei pacchetti.
+Protocollo di routing (ce no sono più di uno): è solo la parte che descrive lo scambio di messaggi tra i router. (anche se strettamente legato al modo con cui sono calcolate le tabelle di routing).
+Routing e capacità. La capacità massima è data dal canale. Routing efficiente.
+Il tipo di inoltro (forwarding) utilizzato da IP condiziona la scelta delle politiche di routing. (forwarding IP: basato su indirizzo di destinazione e con inoltro al next hop).
+Questo implica che se più pacchetti che vengono da più sorgenti incontrano uno stesso router, tutti seguiranno lo stesso percorso. Spesso è poco efficiente se ci sono altre strade.
+I percorsi per una destinazione comune sono un albero (sorgenti = foglie; radice = destinazione).
+Principio su cui si basa il routing IP:
+ - inviare i pacchetti sul cammino minimo verso la destinazione
+ - la metrica su cui si calcolano i cammini minimi è generale
+ - il calcolo avviene in modo distribuito dai router che si scambiano queste informazioni
+ - nella tabella è indicato solo il router successivo
+
+Caratteristiche dell'instradamento
+Classificazione:
+ - Instradamento senza tabella
+ 	- Random
+	- flooding: mando il pacchetto su tutte le destinazioni
+	- source routing: il genio della lampada fa sapere al pacchetto dove andare
+ - Instradamento con tabella
+ 	- Fisso
+	- Dinamico
+ - Instradamento gerarchico
+
+Con tabella: a distanza minima e richiede la definizione di una metrica sulla base di alcuni parametri
+	Fisso: viene fatto in fase di progettazione; se c'è qualche inconveniente in rete non è in grado di adattarsi a quello che succede nella rete.
+	[IP] Dinamico (o adattivo): la tabella varia nel tempo col cambiare della topologia della rete.
+	
+digrafo G(N,A)
+ - N nodi
+ - A archi (coppia ordinata di nodi) A={(i,j) i in N e j in N}
+percorso: insieme di nodi
+cammino: percorso senza nodi ripetuti
+ciclo
+digrafo connesso
+digrafo pesato
+lunghezza di un cammini
+
+Dato un digrafo G(N,A) e due nodi (i,j), trovare il cammino di lunghezza minima.
+Proprietà: se il nodo k è attraversato dal cammino minimo da i a j, il sottocammino fino a k è anch'esso minimo.
+Problema con complessità polinomiale (poco complesso)
+
+Problema pratico: abbiamo risposto per enumerazione (per disperati)
+Com'è stata trovata la soluzione? Elencando tutti i possibili percorsi?
+Come convincere il professore che è quello minimo?
+
+Gli algoritmi che vediamo:
+	- Algoritmo di Bellman-Ford
+		Ipotesi: non ci sono cicli di lunghezza negativa; pesi sia positivi che negativi
+		Scopo: trovare i cammini minimi da tutti i nodi ad un solo nodo e trovare i cammini minimi tra un nodo e tutti gli altri nodi.
+		In cosa consiste?
+		È un casino scriverlo e saperlo e saperlo spiegare.
+		Condizioni di partenza: D(s)^h = 0; D(i)^0 = inf
+		Iterazioni D(i)^(h+1) = min[Di^h, min(j)(D(j)^h + dji)]
+		L'algoritmo termina in N-1 passi.
+
+		L'algoritmo esiste anche in forma distribuita
+	- Algorimo di Dijkstra
+		Funziona soltanto se gli archi hanno tutti pesi maggiori di 0.
+		Scopo: trovare i cammini da tutti i nodi verso un nodo 1
+		Valori iniziali: P{1}, D1 = 0; D(j)^0 = d1j per ogni j =/= 1
+		Etichette temporanee e permanenti
+		Problema: non può essere distribuito, perché l'insieme P (etichette permanenti) è salvato da qualche parte e poi non può essere fatto in parallelo.
+
+		Ci sono dei protocolli che distribuiscono informazioni topologiche
+		L'algoritmo di Bellman-Ford ha una complessita O(N^3) mentre quello di Dijkstra di O(N^2), quindi quest'ultimo è più conveniente
+		Rappresentazione grafo: con una matrice quadrata, liste concatenate
+Informazione di instradamento globale e decentralizzata
+	- Globale: tutti i router vedono la topologia completa della rete e hanno informazione sul costo per ciascun link. Tipico degli algoritmi "link-state"
+	- Decentralizzata: tipico degli algorimi "distance vector", determinano la la tabella di routing scambiando informazioni solamente con i prossimi applicando un processo di calcolo iterativo.
+
+Algoritmo "distance vector": usato in ARPANET dal 1969 al 1979
+	- applica Bellman-Ford in maniera distribuita e riempie così la tabella di instradamento
+	ogni nodo invia il DV periodicamente e se il risultato del ricalcolo differisce dal precedente
+Algoritmo "link state" su ARPANET dal 1979
+		
+.....(ho saltato una lezione per malattia)...
+Lunedì 15 maggio 2019
+mi gira il cazzo e c'è quel coglione di laboratorio che sta cercando di spiegare l'interfaccia di packet tracer ma mi può benissimo succhiare le palle col risciacquo.
+
+Usiamo i router 2600 modulari e di fascia media
+/**/
+Giovedì 16 maggio 2019
+Rete parte D + kahoot
+
+Internet è suddiviso in autonomous systems (AS), il dovere del cui è quello di fornire il collegamento
+Un AS è una porzione di rete gestita dalla stessa autorità. Ci sono gli interior gateway e gli exterior gateway.
+IGP ed EGP (interior/exterior gateway protocol)
+Routing domain è porzione di AS con router che appartengono a più domini.
+Ridistribuzione delle informazioni di un router di frontiera su più domini
+IGP: (distance vector) RIP v1, v2
+	 IGRP proprietario di CISCO
+	 (link state) IS-IS
+	 OSPF
+
+EGP: (path vector) BGP (Border Gateway Protocol)
+
+Routing Information Protocol: RIP v1, progettato nel 1982 e standardizzato nel 1988
+Distance vector, usa Bellman-Ford per il calcolo dei cammini minimi, protocollo distribuito
+Metrica: numero di hop
+Limitato a 16 hops
+I pacchetti sono incapsulati in UDP con port number 520 e IP destinazione 255.255.255.255
+
+Pacchetto RIPv1 contente info
+Header: command, version, reserved.
+		family, padding
+		network address
+		padding
+		padding
+		distance
+(padding = tutto a zero)
+
+Messaggi di richiesta possono essere di tutte le destinazioni oppure di un solo IP
+Max 25 richieste, poi se ne invia un altro
+Tempi:
+una rotta si invalida dopo 180 s
+routing update ogni 30 s
+triggered update
+
+Limitazioni: metrica con hop count, nodi con diametro max 15, reti omogenee, convergenza lenta dovuta ai timer lunghi, no netmask
+
+RIPv2 (RFC 1723)
+Aggiunta autenticazione, info sulla connettività (indicazione esplicita del next hop, route tag), classless routing (subnet mask), multicasting: 224.0.0.9
+
+OSPF (RFC 1247 e succ.): protocollo di routing carrier-grade
+	Protocollo link-state con Dijkstra in ogni nodo
+	supporta il routing gerarchico
+	metrica generica
+	utilizzo protocollo di hello per monitorare lo stato dei vicini
+	Trasportato direttamente su IP (protocol 89), ma deve implementare funzioni di livello di trasporto, come ACK
+	Molte tipologie di messaggi scambiati
+	Supporta auth
+	supporto percorsi multipli verso la destinazione
+Tipi di collegamento in OSPF: punto-punto, reti con 1 router, reti con più router.
+
+BGP è il collante dell'intera internet (è lo standard de facto per i protocolli EGP).
+Permette agli AS di annunciare la propria presenza in rete ed essere raggiunti
+
+Non più distance vector ma path vector. Attributi di tipo generale, contengono una serie di informazioni ma obbligatoriamente contiene il percorso per arrivare alla destinazione.
+Utilizza connessione TCP (porta 179), autenticazione dei router.
+Messaggi: OPEN, UPDATE, KEEPALIVE, NOTIFICATION
+Policy based routing sono regole che impediscono il traffico da e/o verso una certa destinazione, oppure che impediscono l'inoltro tra due punti
+
+Agli AS viene assegnato un numero univoco da IANA.
