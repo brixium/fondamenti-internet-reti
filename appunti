@@ -1616,3 +1616,120 @@ Messaggi: OPEN, UPDATE, KEEPALIVE, NOTIFICATION
 Policy based routing sono regole che impediscono il traffico da e/o verso una certa destinazione, oppure che impediscono l'inoltro tra due punti
 
 Agli AS viene assegnato un numero univoco da IANA.
+
+/**/
+Lunedì 27/05/2019
+
+Panoramica su EIGRP, ma lo abbiamo solo accennato, non abbiamo fatto l'esericio.
+
+NAT: Network Address Translation
+Traduzione degli indirizzi privati verso l'esterno dal router, che sostituisce l'indirizzo privato di sorgente con il suo
+1)
+COMANDI: definire le interfacce se sono inside oppure outside con IP NAT INSIDE/OUTSIDE.
+2)Definire un pool di indirizzi che possono essere usati con ip address e wildcard
+ip access-list nomelista permit ip_network_address wildcard
+
+3) associare il nat alla lista di prima
+ip nat inside source 
+
+/*Mercoledì 29/05/2019*/
+Tecnologie di reti locali, ethernet, WiFi
+
+Tecnologie di reti locali (LAN)
+	IEEE è l'organismo di standardizzazione di reti locali con 802 Working Group
+	LLC e livelli superiori sono condivisi da tutti gli standard di protocolli di comunicazione; MAC e livello fisico differiscono.
+	Ethernet è stato progettato da Xerox nel 1976, poi standardizzato da IEEE 802.3 WG.
+	Nella sua prima versione il mezzo fisico adottato era un cavo coassiale passivo (BUS) a cui si connettevano le stazioni mediante un transceiver.à
+	Ethernet XBaseY:
+		X: bit rate in Mb/s
+		Base: trasmissione in banda base con codifica Manchester
+		Y: lunghezza massima in centinaia di metri
+	Ethernet 10Base5 (thick ethernet, cavo RG-213)
+	Ethernet 10Base2 (thin ethernet, cavo RG-58)
+	La topologia a bus è stata lentamente abbandonata in favore di una topologia a stella, grazie ad una macchina di rete chiamata HUB. Gli hub sono dei ripetitori di segnale a livello fisico.
+	Quando arriva un segnale ad una porta, lo ritrasmette a tutte le altre porte
+	Il mezzo trasmissivo cambia ed è rimpiazzato da doppini in rame (twisted pairs) (Ehternet 10BaseT)
+	A fine anni '90 il rate di trasmissione viene aumentato da 10Mbps a 100Mbps con FastEhternet. In aggiunta ai twisted pair (100BaseTX), si iniziano a usare le fibre ottiche (100BaseFX). Con questo cambiamento lo hub viene sostituito con uno switch.
+	Adesso anche gigabit eth, il prossimo passo è il terabit ethernet (fino ad oggi esiste il 400Gbps)
+
+	Tipi di doppini in rame:
+		UTP
+		Cat 1: analog telephony line
+		Cat 2: digital telephony line
+		Cat 3: B=16MHz (Eth 10BaseT)
+		Cat 4: B=20MHz ?????????????
+		...
+	Il connettore RJ-45 è diventato oggi lo standard per le reti con doppini
+	Su ethernet si usano diverse coppie per trasmettere e per ricevere.
+	Cavo diretto (straigth-through) o incrociato (crossed)
+	Se connetto un PC ed uno switch le cose funzionano con un cavo diretto; se voglio connettere due PC serve un cavo incrociato.
+	Questa cosa oggi potrebbe non servire perché le moderne schede di rete sono in grado di adattarsi
+	
+	Protocol stack
+	OOO ->porte di passaggio
+	LLC ->multiplexing
+	O ->porta di passaggio
+	MAC ->filtraggio e accesso multiplo
+	O ->porta di passaggio
+	PHY ->TX/RX CS e CD
+
+	Esiste una verisone di ethernet che mette tutte queste cose insieme
+
+	Trama ethernet:
+	Sync(7B), Destination(6B), Source(6B), Type(2B), Data(46-1500B), FCS(4B)
+
+	Type per multiplazione a più livelli, FCS è tipo CRC
+	Indirzzi MAC: 48 bit (6B): i primi 3B sono relativi al costruttore, i restanti 3 identificano la scheda. Indirizzo broadcast è FF:FF:FF:FF:FF:FF (tutti 1).
+
+	WiFi 802.11 è la versione wireless di ethernet.
+	2 modalità: centralizzata e distribuita.
+	BSS = Basic Service Set; AP = Access Point
+	Centralizzata: i device non possono parlarsi tra di loro ma solo verso un access-point.
+	Distribuita (modalità ad hoc): collegamenti diretti tra un gruppo di stazioni oppure peer-to peer tra i dispositivi.
+	Il BSS è quello che si crea all'interno di una rete wireless; poi quando l'access point si connette alla rete cablata si viene a creare l'ESS (extended service set) tramite un sistema di distribuzione.
+	L'AP fa store and forward e non è uno switch.
+	Unico indirizzo di livello 2: sia ethernet che wifi utilizzano gli indirizzi MAC.
+	Nel frame WiFi ci sono fino a 4 indirizzi per trama. I primi due sono sorgente e destinatario; la seconda coppia è formata da trasmettitore (attuale) e ricevitore (access-point)
+	
+Collegamenti commutati
+	LAN commutate (switched)
+	L'hub fa una ripetizione bit a bit e c'è una possibilità di collisione tra tutti quelli collegati.
+	Lo switch fanno store and forward delle trame e, con lo store, evitano le collisioni. COmmutazione di pacchetto.
+	Lo switch impara qual è la porta giusta dell'inoltro.
+	Funzioni dello switch: filtering e relay.
+	Filtering: se una trama ricevuta da LAN1 è indirizzata ad una stazione di LAN1, viene scratata
+	Relay: se una trama ricevuta da LAN1 è indirizzata ad una stazione di LAN2, viene trasmessa su LAN2
+	Inizialmente lo switch era chiamato bridge e serviva per mettere in comunicazione due hub
+	Per stabilire se filtrare/instradare una trama si consulta una tabella di instradamento locale chiamata forwarding database (o FDB)
+	A ciascuna porta dello switch è collegato un dominio che può contenere una stazione oppure una rete broadcast tradizionale (hub).
+	Lo switch non invia più bit per bit ma trame.
+	Transparent bridging.
+	Le tabelle di switching sono compilate automaticamente, l'indirizzo dello switch non compare nelle trame, la presenza dello switch è completamente trasparente alle stazioni
+	Gli algoritmi di bridging imparano automaticamente da quale porta si raggiunge una stazione grazie al fatto che la rete è topologicamente fatta ad albero.
+	Autoapprendimento.
+		All'inizio la tabella di switching è vuota.
+		All'arrivo di ogni pacchetto viene registrato l'indirizzo sorgente e inserito in una riga della tabella di switching.
+		Poi viene letto l'indirizzo di destinazione. Se l'indirizzo è in tabella si inoltra sulla porta corrispondente, altrimenti si invia in broadcast ovunque tranne che sulla porta da dove lo si è ricevuto.
+	Validità della riga della tabella è di 300s
+	Se la rete non è un albero succedono dei diastri, specialmente la BROADCAST STORM.
+	Bastano due switch e due reti connesse ad anello per incasinare tutto.
+	Si evita questa cosa con uno spanning tree. Da un grafo bisogna tagliare qualche ramo.
+	Cioè la rete ha la sua topologia ma alcune porte vengono bloccate
+	Una porta bloccata lascia passare i messaggi del protocollo di spanning tree ma non le trame dati.
+	Esistono i pacchetti di spanning tree protocol, si elegge una radice, si calcolano i rami dell'albero.
+	LAN completamente commutate.
+	La modalità Ethernet full duplex consente la trasmissione sul doppino o fibra senza meccanismo di accesso multiplo (no CSMA-CD). Ciò consente la creazione di LAN completamente commutate, che costituiscono la soluzione usata universalmente oggigiorno.
+
+	Bridge con tecnologie eterogenee (come ad esempio un AP wifi), che è connesso ad una rete ethernet.
+	
+VLAN
+	Ad uno switch è collegata fisicamente una rete, ma a livello logico (non fisico) separo a piacimento la rete. Se una VLAN vuole comunicare con un'altra deve passare per un router.
+VLAN port based.
+	Le VLAN possono essere separate staticamente su base porta (solo reti ad un livello)
+	Dominio di broadcast disgiunto per ogni VLAN, definito a priori assegnando le porte degli switch (access port) a VLAN diverse.
+	Indipendente dalla configurazione fisica delle VLAN
+
+	I pacchetti hanno una label scritta dentro al pacchetto IP.
+	Un trunk è un link dove passano pacchetti di diverse VLAN.
+	Lo switch si comporta come se ci fossero n switch, dove n è il numero delle VLAN create.
+	
